@@ -5,7 +5,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GameListRepository(
+class GameRepository(
     private val service: RAWGService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
