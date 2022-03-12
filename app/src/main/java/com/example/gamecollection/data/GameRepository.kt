@@ -1,5 +1,6 @@
 package com.example.gamecollection.data
 
+import android.util.Log
 import com.example.gamecollection.api.RAWGService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -11,11 +12,14 @@ class GameRepository(
 ) {
     suspend fun loadGameList(
         key: String,
-        search: String
+        search: String?,
+        dates: String?,
+        ordering: String?
     ) : Result<GameList> =
         withContext(ioDispatcher) {
             try {
-                val list = service.getGameList(key, search)
+                val list = service.getGameList(key, search, dates, ordering)
+                Log.d("GameRepository", list.toString())
                 Result.success(list)
             } catch (e: Exception) {
                 Result.failure(e)

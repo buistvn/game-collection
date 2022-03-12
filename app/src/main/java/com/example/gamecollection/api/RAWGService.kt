@@ -15,7 +15,9 @@ interface RAWGService {
     @GET("/api/games")
     suspend fun getGameList(
         @Query("key") key: String,
-        @Query("search") search: String
+        @Query("search") search: String?,
+        @Query("dates") dates: String?,
+        @Query("ordering") ordering: String?
     ) : GameList
 
     // Get game details on card click

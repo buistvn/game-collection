@@ -21,10 +21,15 @@ class GameSearchViewModel : ViewModel() {
     private val _error = MutableLiveData<Throwable?>(null)
     val error: LiveData<Throwable?> =_error
 
-    fun loadResults(key: String, search: String) {
+    fun loadResults(
+        key: String,
+        search: String?,
+        dates: String?,
+        ordering: String?
+    ) {
         viewModelScope.launch {
             _loading.value = true
-            val result = repository.loadGameList(key, search)
+            val result = repository.loadGameList(key, search, dates, ordering)
             _loading.value = false
             _error.value = result.exceptionOrNull()
             _results.value = result.getOrNull()
