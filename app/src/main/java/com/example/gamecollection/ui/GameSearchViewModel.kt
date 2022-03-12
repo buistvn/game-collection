@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.gamecollection.api.RAWGService
 import com.example.gamecollection.data.GameList
 import com.example.gamecollection.data.GameRepository
+import com.example.gamecollection.data.LoadingStatus
 import kotlinx.coroutines.launch
 
 class GameSearchViewModel : ViewModel() {
@@ -15,8 +16,8 @@ class GameSearchViewModel : ViewModel() {
     private val _results = MutableLiveData<GameList?>(null)
     val results: LiveData<GameList?> = _results
 
-    private val _loading = MutableLiveData(false)
-    val loading: LiveData<Boolean> = _loading
+    private val _loading = MutableLiveData(LoadingStatus.SUCCESS)
+    val loading: LiveData<LoadingStatus> = _loading
 
     private val _error = MutableLiveData<Throwable?>(null)
     val error: LiveData<Throwable?> =_error
@@ -28,11 +29,13 @@ class GameSearchViewModel : ViewModel() {
         ordering: String?
     ) {
         viewModelScope.launch {
-            _loading.value = true
+            _loading.value = LoadingStatus.LOADING
             val result = repository.loadGameList(key, search, dates, ordering)
-            _loading.value = false
-            _error.value = result.exceptionOrNull()
             _results.value = result.getOrNull()
+            _loading.value = when (result.isSuccess) {
+                true -> LoadingStatus.SUCCESS
+                false -> LoadingStatus.ERROR
+            }
         }
     }
 }

@@ -3,4 +3,6 @@
 
     <string name="search_hint">Search for games...</string>
     <string name="search_button">Search</string>
+
+    <string name="search_error">We were unable to execute your search.  Please check your internet connection and try again.</string>
 </resources>
