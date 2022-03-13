@@ -15,13 +15,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/details">
+            android:id="@+id/details"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_game_title"
-                android:textSize="32dp"
-                android:gravity="center"/>
+                android:textSize="28sp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceHeadline2"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_description_short"
+                android:textSize="14sp"
+                android:textAppearance="?attr/textAppearanceBody1"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
         </LinearLayout>
 
         <TextView

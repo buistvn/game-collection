@@ -37,7 +37,12 @@ class GameDetailActivity : AppCompatActivity() {
         }
         gameDetailsViewModel.results.observe(this) { results ->
             if (results != null) {
+                val short = results.description_raw.chunked(300)[0].split(".").toMutableList()
+                short.removeLast()
+                val desc = short.joinToString(".") + "..."
+                Log.d(tag, results.description_raw)
                 findViewById<TextView>(R.id.tv_game_title).text = results.name
+                findViewById<TextView>(R.id.tv_description_short).text = desc
             }
         }
         gameDetailsViewModel.loading.observe(this) { uiState ->
