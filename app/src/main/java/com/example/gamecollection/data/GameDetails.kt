@@ -11,7 +11,7 @@ data class GameDetails(
     val developers: List<Developer>,
     val genres: List<Genre>,
     val tags: List<Tag>,
-    val esrb_rating: ESRBRating
+    val esrb_rating: ESRBRating?
 )
 
 data class Store(

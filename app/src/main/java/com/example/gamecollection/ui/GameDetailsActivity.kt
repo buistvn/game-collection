@@ -7,9 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.example.gamecollection.R
-import com.example.gamecollection.data.GameDetails
 import com.example.gamecollection.data.LoadingStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
 
@@ -18,7 +16,6 @@ const val EXTRA_GAME_ID = "com.example.gamecollection.GAME_ID"
 class GameDetailActivity : AppCompatActivity() {
     private val tag = "GameDetailActivity"
     private var gameID: Int? = null
-    private var gameDetails: GameDetails? = null
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
 
     private lateinit var detailsLayout: LinearLayout
