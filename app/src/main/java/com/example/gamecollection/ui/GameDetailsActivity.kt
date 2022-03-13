@@ -37,12 +37,44 @@ class GameDetailActivity : AppCompatActivity() {
         }
         gameDetailsViewModel.results.observe(this) { results ->
             if (results != null) {
-                val short = results.description_raw.chunked(300)[0].split(".").toMutableList()
-                short.removeLast()
-                val desc = short.joinToString(".") + "..."
-                Log.d(tag, results.description_raw)
                 findViewById<TextView>(R.id.tv_game_title).text = results.name
-                findViewById<TextView>(R.id.tv_description_short).text = desc
+
+                val rating = "Rating: " + results.rating.toString() + "/5"
+                findViewById<TextView>(R.id.tv_rating).text = rating
+
+                val releasedDate = "Released: " + results.released
+                findViewById<TextView>(R.id.tv_released).text = releasedDate
+
+                val tags: TextView = findViewById<TextView>(R.id.tv_tags)
+                var fullTags = "Tags: "
+                results.tags.forEach{
+                    fullTags += it.name + ", "
+                }
+                var fourTags = "Tags: "
+                for ((n, tags) in results.tags.withIndex()) {
+                    if (n < 4) fourTags += tags.name + ", "
+                }
+                tags.text = fourTags.dropLast(2) + "..."
+                tags.setOnClickListener {
+                    if (tags.text == fourTags.dropLast(2) + "...") {
+                        tags.text = fullTags.dropLast(2)
+                    } else {
+                        tags.text = fourTags.dropLast(2) + "..."
+                    }
+                }
+
+                val desc: TextView = findViewById(R.id.tv_description)
+                val temp = results.description_raw.chunked(300)[0].split(".").toMutableList()
+                temp.removeLast()
+                val short = temp.joinToString(".") + "..."
+                desc.text = short
+                desc.setOnClickListener {
+                    if (desc.text == short) {
+                        desc.text = results.description_raw
+                    } else {
+                        desc.text = short
+                    }
+                }
             }
         }
         gameDetailsViewModel.loading.observe(this) { uiState ->
