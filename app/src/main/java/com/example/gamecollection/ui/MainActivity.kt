@@ -1,6 +1,5 @@
 package com.example.gamecollection.ui
 
-import android.app.appsearch.SearchResult
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,7 +13,6 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gamecollection.R
-import com.example.gamecollection.data.GameList
 import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -69,7 +67,6 @@ class MainActivity : AppCompatActivity() {
                     searchResultListRV.visibility = View.VISIBLE
                     searchErrorTV.visibility = View.INVISIBLE
                 }
-
             }
         }
 
@@ -98,7 +95,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onGameListClick(gameListItem: GameListItem) {
-
+        Log.d(tag, gameListItem.toString())
+        val intent = Intent(this, GameDetailActivity::class.java).apply {
+            putExtra(EXTRA_GAME_ID,gameListItem.id)
+        }
+        startActivity(intent)
     }
 
 }
