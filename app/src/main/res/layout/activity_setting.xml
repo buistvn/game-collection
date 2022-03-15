@@ -8,10 +8,5 @@
         android:name="com.example.gamecollection.ui.SettingsFragment"
         tools:context=".ui.SettingsActivity" >
 
-    <DatePicker
-            android:id="@+id/date_Picker"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:datePickerMode = "spinner"
-            android:calendarViewShown="false"/>
+
 </androidx.fragment.app.FragmentContainerView>

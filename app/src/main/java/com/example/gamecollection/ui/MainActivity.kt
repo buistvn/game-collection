@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
@@ -102,6 +103,11 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         Log.d(tag, "onPause()")
         super.onPause()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_main, menu)
+        return true
     }
 
     private fun onGameListClick(gameListItem: GameListItem) {
