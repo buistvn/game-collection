@@ -13,7 +13,15 @@
                 android:dialogTitle="@string/pref_sort_title"
                 app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+                android:title="@string/pref_begin_year_title"
+                android:key="@string/pref_begin_year_key"
+                app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+                android:title="@string/pref_end_year_title"
+                android:key="@string/pref_end_year_key"
+                app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 

@@ -86,9 +86,18 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.pref_sort_key),
                     null
                 )
+                val beginYear = sharedPrefs.getString(
+                    getString(R.string.pref_begin_year_key),
+                    null
+                )
+
+                val endYear = sharedPrefs.getString(
+                    getString(R.string.pref_end_year_key),
+                    null
+                )
                 //val datePicker = findViewById<DatePicker>(R.id.date_Picker)
                 // Results on search are from the user's input
-                gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, null, sort)
+                gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, "$beginYear-01-01,$endYear-12-31", sort)
             }
         }
 

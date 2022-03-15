@@ -10,10 +10,12 @@
 
     <string name="pref_category_search">Search settings</string>
     <string name="pref_sort_title">Sort by</string>
-    <string name="pref_user_title">Search only for games by this App user</string>
+    <string name="pref_begin_year_title">choose the beginning year</string>
+    <string name="pref_end_year_title">choose the end year</string>
 
     <string name="pref_sort_key" translatable="false">sort</string>
-    <string name="pref_user_key" translatable="false">user</string>
+    <string name="pref_begin_year_key">beginning year</string>
+    <string name="pref_end_year_key">end year</string>
 
     <string name="pref_sort_entry_name">name</string>
     <string name="pref_sort_entry_released">released date</string>
@@ -34,5 +36,7 @@
     <string name="pref_sort_val_metacritic">metacritic</string>
 
     <string name="pref_sort_default">@string/pref_sort_val_rating</string>
+
+
 
 </resources>
