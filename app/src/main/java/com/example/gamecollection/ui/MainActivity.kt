@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.TextUtils.isEmpty
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -95,9 +96,16 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.pref_end_year_key),
                     null
                 )
+
+                val year = "$beginYear-01-01,$endYear-12-31"
+                if(!isEmpty(beginYear)&&!isEmpty(endYear)){
+                    gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, year, sort)
+                }
                 //val datePicker = findViewById<DatePicker>(R.id.date_Picker)
                 // Results on search are from the user's input
-                gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, "$beginYear-01-01,$endYear-12-31", sort)
+                else {
+                    gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, null, sort)
+                }
             }
         }
 
