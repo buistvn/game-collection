@@ -1,5 +1,6 @@
 package com.example.gamecollection.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,7 +9,10 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gamecollection.R
+import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
 
@@ -18,10 +22,13 @@ class GameDetailActivity : AppCompatActivity() {
     private val tag = "GameDetailActivity"
     private var gameID: Int? = null
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
+    private val gameSearchViewModel: GameSearchViewModel by viewModels()
+    private lateinit var gameListAdapter: GameListAdapter
 
     private lateinit var detailsLayout: LinearLayout
     private lateinit var searchErrorTV: TextView
     private lateinit var loadingIndicator: CircularProgressIndicator
+    private lateinit var searchResultListRV: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +37,17 @@ class GameDetailActivity : AppCompatActivity() {
         detailsLayout = findViewById(R.id.details)
         searchErrorTV = findViewById(R.id.tv_search_error)
         loadingIndicator = findViewById(R.id.loading_indicator)
+        searchResultListRV = findViewById(R.id.rv_search_results)
+
+        gameListAdapter = GameListAdapter(::onGameListClick)
+        searchResultListRV.layoutManager = GridLayoutManager(this,2)
+        searchResultListRV.setHasFixedSize(true)
+
+        searchResultListRV.adapter = gameListAdapter
+
+        gameSearchViewModel.results.observe(this) { results ->
+            gameListAdapter.updateRepoList(results)
+        }
 
         if (intent != null && intent.hasExtra(EXTRA_GAME_ID)) {
             gameID = intent.getSerializableExtra(EXTRA_GAME_ID) as Int
@@ -38,6 +56,19 @@ class GameDetailActivity : AppCompatActivity() {
         }
         gameDetailsViewModel.results.observe(this) { results ->
             if (results != null) {
+                var x = 0
+                var ids = ""
+                var genres = "Genres: "
+                for (genre in results.genres) {
+                    genres = genres + genre!!.name + ", "
+                    if (x < 3) {
+                        ids += results.genres[x]!!.id.toString() + ", "
+                    }
+                    x += 1
+                }
+                ids = ids.dropLast(2)
+                genres = genres.dropLast(2)
+                gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids)
                 findViewById<TextView>(R.id.tv_game_title).text = results.name
 
                 val rating = "Rating: " + results.rating.toString() + "/5"
@@ -46,18 +77,20 @@ class GameDetailActivity : AppCompatActivity() {
                 val releasedDate = "Released: " + results.released
                 findViewById<TextView>(R.id.tv_released).text = releasedDate
 
+                findViewById<TextView>(R.id.tv_genres).text = genres
+
                 val tags: TextView = findViewById(R.id.tv_tags)
                 if (results.tags.isNullOrEmpty()) {
                     tags.text = "No tags"
                 } else {
                     var fullTags = "Tags: "
                     results.tags.forEach {
-                        fullTags += it.name + ", "
+                        fullTags += it!!.name + ", "
                     }
                     fullTags = fullTags.dropLast(2)
                     var fourTags = "Tags: "
                     for ((n, tags) in results.tags.withIndex()) {
-                        if (n < 4) fourTags += tags.name + ", "
+                        if (n < 4) fourTags += tags!!.name + ", "
                     }
                     fourTags = fourTags.dropLast(2) + "..."
                     tags.text = fourTags
@@ -108,5 +141,12 @@ class GameDetailActivity : AppCompatActivity() {
         gameDetailsViewModel.error.observe(this) { error ->
             Log.d(tag, error.toString())
         }
+    }
+    private fun onGameListClick(gameListItem: GameListItem) {
+        Log.d(tag, gameListItem.toString())
+        val intent = Intent(this, GameDetailActivity::class.java).apply {
+            putExtra(EXTRA_GAME_ID,gameListItem.id)
+        }
+        startActivity(intent)
     }
 }

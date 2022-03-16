@@ -20,7 +20,7 @@ class GameSearchViewModel : ViewModel() {
     val loading: LiveData<LoadingStatus> = _loading
 
     private val _error = MutableLiveData<Throwable?>(null)
-    val error: LiveData<Throwable?> =_error
+    val error: LiveData<Throwable?> = _error
 
     fun loadResults(
         key: String,
