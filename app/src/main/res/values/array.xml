@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_sort_entries">
+        <item>@string/pref_sort_entry_none</item>
+        <item>@string/pref_sort_entry_name</item>
+        <item>@string/pref_sort_entry_released</item>
+        <item>@string/pref_sort_entry_added</item>
+        <item>@string/pref_sort_entry_created</item>
+        <item>@string/pref_sort_entry_updated</item>
+        <item>@string/pref_sort_entry_rating</item>
+        <item>@string/pref_sort_entry_metacritic</item>
+    </string-array>
+
+    <string-array name="pref_sort_values">
+        <item>@string/pref_sort_val_none</item>
+        <item>@string/pref_sort_val_name</item>
+        <item>@string/pref_sort_val_released</item>
+        <item>@string/pref_sort_val_added</item>
+        <item>@string/pref_sort_val_created</item>
+        <item>@string/pref_sort_val_updated</item>
+        <item>@string/pref_sort_val_rating</item>
+        <item>@string/pref_sort_val_metacritic</item>
+    </string-array>
+</resources>

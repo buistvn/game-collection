@@ -3,14 +3,14 @@ package com.example.gamecollection.data
 data class GameDetails(
     val id: Int,
     val name: String,
-    val description_raw: String,
+    val description: String,
     val released: String,
     val background_image: String,
     val rating: Float,
-    val stores: List<Store>,
-    val developers: List<Developer>,
-    val genres: List<Genre>,
-    val tags: List<Tag>,
+    val stores: List<Store?>,
+    val developers: List<Developer?>,
+    val genres: List<Genre?>,
+    val tags: List<Tag?>,
     val esrb_rating: ESRBRating?
 )
 
@@ -29,6 +29,7 @@ data class Developer(
 )
 
 data class Genre(
+    val id: Int,
     val name: String
 )
 
