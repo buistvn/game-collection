@@ -8,5 +8,4 @@
         android:name="com.example.gamecollection.ui.SettingsFragment"
         tools:context=".ui.SettingsActivity" >
 
-
 </androidx.fragment.app.FragmentContainerView>

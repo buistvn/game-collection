@@ -12,6 +12,4 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_setting)
 
     }
-
-
 }

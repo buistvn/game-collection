@@ -54,6 +54,7 @@ class GameDetailActivity : AppCompatActivity() {
                     results.tags.forEach {
                         fullTags += it.name + ", "
                     }
+                    fullTags = fullTags.dropLast(2)
                     var fourTags = "Tags: "
                     for ((n, tags) in results.tags.withIndex()) {
                         if (n < 4) fourTags += tags.name + ", "
@@ -73,9 +74,8 @@ class GameDetailActivity : AppCompatActivity() {
                 val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
                 val size = if (long.length < 300) long.length else 300
                 val temp = long.chunked(size)[0].split(".").toMutableList()
-                temp.removeLast()
-                val shortI = temp.joinToString(".") + "."
-                val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI..") else long
+                val shortI = temp.joinToString(".")
+                val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI...") else long
                 desc.text = short
                 desc.setOnClickListener {
                     if (desc.text == short) {
