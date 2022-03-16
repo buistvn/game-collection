@@ -3,7 +3,7 @@ package com.example.gamecollection.data
 data class GameDetails(
     val id: Int,
     val name: String,
-    val description_raw: String,
+    val description: String,
     val released: String,
     val background_image: String,
     val rating: Float,

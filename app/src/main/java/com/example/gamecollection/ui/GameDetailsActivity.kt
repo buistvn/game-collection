@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import com.example.gamecollection.R
 import com.example.gamecollection.data.LoadingStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -45,32 +46,40 @@ class GameDetailActivity : AppCompatActivity() {
                 val releasedDate = "Released: " + results.released
                 findViewById<TextView>(R.id.tv_released).text = releasedDate
 
-                val tags: TextView = findViewById<TextView>(R.id.tv_tags)
-                var fullTags = "Tags: "
-                results.tags.forEach{
-                    fullTags += it.name + ", "
-                }
-                var fourTags = "Tags: "
-                for ((n, tags) in results.tags.withIndex()) {
-                    if (n < 4) fourTags += tags.name + ", "
-                }
-                tags.text = fourTags.dropLast(2) + "..."
-                tags.setOnClickListener {
-                    if (tags.text == fourTags.dropLast(2) + "...") {
-                        tags.text = fullTags.dropLast(2)
-                    } else {
-                        tags.text = fourTags.dropLast(2) + "..."
+                val tags: TextView = findViewById(R.id.tv_tags)
+                if (results.tags.isNullOrEmpty()) {
+                    tags.text = "No tags"
+                } else {
+                    var fullTags = "Tags: "
+                    results.tags.forEach {
+                        fullTags += it.name + ", "
+                    }
+                    var fourTags = "Tags: "
+                    for ((n, tags) in results.tags.withIndex()) {
+                        if (n < 4) fourTags += tags.name + ", "
+                    }
+                    fourTags = fourTags.dropLast(2) + "..."
+                    tags.text = fourTags
+                    tags.setOnClickListener {
+                        if (tags.text == fourTags) {
+                            tags.text = fullTags
+                        } else {
+                            tags.text = fourTags
+                        }
                     }
                 }
 
                 val desc: TextView = findViewById(R.id.tv_description)
-                val temp = results.description_raw.chunked(300)[0].split(".").toMutableList()
+                val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                val size = if (long.length < 300) long.length else 300
+                val temp = long.chunked(size)[0].split(".").toMutableList()
                 temp.removeLast()
-                val short = temp.joinToString(".") + "..."
+                val shortI = temp.joinToString(".") + "."
+                val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI..") else long
                 desc.text = short
                 desc.setOnClickListener {
                     if (desc.text == short) {
-                        desc.text = results.description_raw
+                        desc.text = long
                     } else {
                         desc.text = short
                     }
