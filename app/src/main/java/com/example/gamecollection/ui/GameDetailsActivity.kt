@@ -2,11 +2,11 @@ package com.example.gamecollection.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -28,6 +28,8 @@ class GameDetailActivity : AppCompatActivity() {
     private var gameID: Int? = null
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
     private val gameSearchViewModel: GameSearchViewModel by viewModels()
+    private val gameScreenshotsViewModel: GameScreenshotsViewModel by viewModels()
+    private val gameTrailerViewModel: GameTrailerViewModel by viewModels()
     private lateinit var gameListAdapter: GameListAdapter
     private lateinit var storeAdapter: StoresAdapter
 
@@ -66,9 +68,12 @@ class GameDetailActivity : AppCompatActivity() {
             gameID = intent.getSerializableExtra(EXTRA_GAME_ID) as Int
             Log.d(tag, gameID!!.toString())
             gameDetailsViewModel.loadResults(gameID!!, RAWG_API_KEY)
+            gameScreenshotsViewModel.loadResults(gameID!!.toString(), RAWG_API_KEY)
+            gameTrailerViewModel.loadResults(gameID!!, RAWG_API_KEY)
         }
         gameDetailsViewModel.results.observe(this) { results ->
             if (results != null) {
+                // genres
                 var x = 0
                 var ids = ""
                 var genres = "Genres: "
@@ -82,16 +87,20 @@ class GameDetailActivity : AppCompatActivity() {
                 ids = ids.dropLast(2)
                 genres = genres.dropLast(2)
                 gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids)
+                findViewById<TextView>(R.id.tv_genres).text = genres
+
+                // title
                 findViewById<TextView>(R.id.tv_game_title).text = results.name
 
+                // rating
                 val rating = "Rating: " + results.rating.toString() + "/5"
                 findViewById<TextView>(R.id.tv_rating).text = rating
 
+                // release date
                 val releasedDate = "Released: " + results.released
                 findViewById<TextView>(R.id.tv_released).text = releasedDate
 
-                findViewById<TextView>(R.id.tv_genres).text = genres
-
+                // tags
                 val tags: TextView = findViewById(R.id.tv_tags)
                 if (results.tags.isNullOrEmpty()) {
                     tags.text = "No tags"
@@ -116,6 +125,7 @@ class GameDetailActivity : AppCompatActivity() {
                     }
                 }
 
+                // description
                 val desc: TextView = findViewById(R.id.tv_description)
                 val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
                 val size = if (long.length < 300) long.length else 300
@@ -131,6 +141,7 @@ class GameDetailActivity : AppCompatActivity() {
                     }
                 }
 
+                // stores
                 storeAdapter.updateStoreList(results.stores)
                 val stores: TextView = findViewById(R.id.tv_stores)
 
@@ -138,6 +149,11 @@ class GameDetailActivity : AppCompatActivity() {
                 val yesStores = "Stores:"
                 if (results.stores.isNullOrEmpty()) stores.text = noStores
                 else stores.text = yesStores
+
+                // screenshots
+                gameScreenshotsViewModel.results.observe(this) { ssResults ->
+                }
+
             }
         }
         gameDetailsViewModel.loading.observe(this) { uiState ->

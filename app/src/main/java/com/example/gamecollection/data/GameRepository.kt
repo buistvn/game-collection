@@ -40,4 +40,28 @@ class GameRepository(
                 Result.failure(e)
             }
         }
+    suspend fun loadGameScreenshots(
+        game_pk: String,
+        key: String
+    ) : Result<GameScreenshots> =
+        withContext(ioDispatcher) {
+            try {
+                val screenshots = service.getGameScreenshots(game_pk, key)
+                Result.success(screenshots)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    suspend fun loadGameTrailers(
+        id: Int,
+        key: String
+    ) : Result<GameTrailer> =
+        withContext(ioDispatcher) {
+            try {
+                val trailer = service.getGameTrailers(id, key)
+                Result.success(trailer)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
 }
