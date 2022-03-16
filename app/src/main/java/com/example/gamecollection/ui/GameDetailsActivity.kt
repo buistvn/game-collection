@@ -1,14 +1,23 @@
 package com.example.gamecollection.ui
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.gamecollection.R
+import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
+import com.example.gamecollection.data.Store
 import com.google.android.material.progressindicator.CircularProgressIndicator
 
 const val EXTRA_GAME_ID = "com.example.gamecollection.GAME_ID"
@@ -17,10 +26,17 @@ class GameDetailActivity : AppCompatActivity() {
     private val tag = "GameDetailActivity"
     private var gameID: Int? = null
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
+    private val gameSearchViewModel: GameSearchViewModel by viewModels()
+    private val gameScreenshotsViewModel: GameScreenshotsViewModel by viewModels()
+    private val gameTrailerViewModel: GameTrailerViewModel by viewModels()
+    private lateinit var gameListAdapter: GameListAdapter
+    private lateinit var storeAdapter: StoresAdapter
 
     private lateinit var detailsLayout: LinearLayout
     private lateinit var searchErrorTV: TextView
     private lateinit var loadingIndicator: CircularProgressIndicator
+    private lateinit var searchResultListRV: RecyclerView
+    private lateinit var storeListRV: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,52 +45,154 @@ class GameDetailActivity : AppCompatActivity() {
         detailsLayout = findViewById(R.id.details)
         searchErrorTV = findViewById(R.id.tv_search_error)
         loadingIndicator = findViewById(R.id.loading_indicator)
+        searchResultListRV = findViewById(R.id.rv_search_results)
+        storeListRV = findViewById(R.id.rv_stores)
+
+        gameListAdapter = GameListAdapter(::onGameListClick)
+        storeAdapter = StoresAdapter(::onStoreClick)
+        searchResultListRV.layoutManager = GridLayoutManager(this,2)
+        searchResultListRV.setHasFixedSize(true)
+
+        storeListRV.layoutManager = LinearLayoutManager(this)
+        storeListRV.setHasFixedSize(true)
+
+        searchResultListRV.adapter = gameListAdapter
+        storeListRV.adapter = storeAdapter
+
+        gameSearchViewModel.results.observe(this) { results ->
+            gameListAdapter.updateRepoList(results)
+        }
 
         if (intent != null && intent.hasExtra(EXTRA_GAME_ID)) {
             gameID = intent.getSerializableExtra(EXTRA_GAME_ID) as Int
             Log.d(tag, gameID!!.toString())
             gameDetailsViewModel.loadResults(gameID!!, RAWG_API_KEY)
+            gameScreenshotsViewModel.loadResults(gameID!!.toString(), RAWG_API_KEY)
+            gameTrailerViewModel.loadResults(gameID!!, RAWG_API_KEY)
         }
         gameDetailsViewModel.results.observe(this) { results ->
             if (results != null) {
+                // genres
+                var x = 0
+                var ids = ""
+                var genres = "Genres: "
+                for (genre in results.genres) {
+                    genres = genres + genre!!.name + ", "
+                    if (x < 3) {
+                        ids += results.genres[x]!!.id.toString() + ", "
+                    }
+                    x += 1
+                }
+                ids = ids.dropLast(2)
+                genres = genres.dropLast(2)
+                gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids)
+                findViewById<TextView>(R.id.tv_genres).text = genres
+
+                // title
                 findViewById<TextView>(R.id.tv_game_title).text = results.name
 
+                // rating
                 val rating = "Rating: " + results.rating.toString() + "/5"
                 findViewById<TextView>(R.id.tv_rating).text = rating
 
+                // release date
                 val releasedDate = "Released: " + results.released
                 findViewById<TextView>(R.id.tv_released).text = releasedDate
 
-                val tags: TextView = findViewById<TextView>(R.id.tv_tags)
-                var fullTags = "Tags: "
-                results.tags.forEach{
-                    fullTags += it.name + ", "
-                }
-                var fourTags = "Tags: "
-                for ((n, tags) in results.tags.withIndex()) {
-                    if (n < 4) fourTags += tags.name + ", "
-                }
-                tags.text = fourTags.dropLast(2) + "..."
-                tags.setOnClickListener {
-                    if (tags.text == fourTags.dropLast(2) + "...") {
-                        tags.text = fullTags.dropLast(2)
-                    } else {
-                        tags.text = fourTags.dropLast(2) + "..."
+                // tags
+                val tags: TextView = findViewById(R.id.tv_tags)
+                if (results.tags.isNullOrEmpty()) {
+                    tags.text = "No tags"
+                } else {
+                    var fullTags = "Tags: "
+                    results.tags.forEach {
+                        fullTags += it!!.name + ", "
+                    }
+                    fullTags = fullTags.dropLast(2)
+                    var fourTags = "Tags: "
+                    for ((n, tags) in results.tags.withIndex()) {
+                        if (n < 4) fourTags += tags!!.name + ", "
+                    }
+                    fourTags = fourTags.dropLast(2) + "..."
+                    tags.text = fourTags
+                    tags.setOnClickListener {
+                        if (tags.text == fourTags) {
+                            tags.text = fullTags
+                        } else {
+                            tags.text = fourTags
+                        }
                     }
                 }
 
+                // description
                 val desc: TextView = findViewById(R.id.tv_description)
-                val temp = results.description_raw.chunked(300)[0].split(".").toMutableList()
-                temp.removeLast()
-                val short = temp.joinToString(".") + "..."
+                val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                val size = if (long.length < 300) long.length else 300
+                val temp = long.chunked(size)[0].split(".").toMutableList()
+                val shortI = temp.joinToString(".")
+                val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI...") else long
                 desc.text = short
                 desc.setOnClickListener {
                     if (desc.text == short) {
-                        desc.text = results.description_raw
+                        desc.text = long
                     } else {
                         desc.text = short
                     }
                 }
+
+                // stores
+                storeAdapter.updateStoreList(results.stores)
+                val stores: TextView = findViewById(R.id.tv_stores)
+
+                val noStores = "Not found in stores"
+                val yesStores = "Stores:"
+                if (results.stores.isNullOrEmpty()) stores.text = noStores
+                else stores.text = yesStores
+
+                // screenshots
+                gameScreenshotsViewModel.results.observe(this) { ssResults ->
+                    val screenshots: LinearLayout = findViewById(R.id.screenshots)
+                    if (ssResults != null) {
+                        Log.d(tag, ssResults.toString())
+                        for (screenshot in ssResults!!.results) {
+                            val tempSS = ImageView(this)
+                            tempSS.layoutParams = LinearLayout.LayoutParams(
+                                800,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            Glide.with(this)
+                                .load(screenshot.image)
+                                .into(tempSS)
+                            screenshots.addView(tempSS)
+                        }
+                    }
+                }
+
+                // trailer
+                gameTrailerViewModel.results.observe(this) { trailerResults ->
+                    if (trailerResults != null) {
+                        var trailerTitle = ""
+                        if (trailerResults.count > 0) {
+                            var url = trailerResults.results[0].data.normal
+                            if (!url.startsWith("http://") && !url.startsWith("https://"))
+                                url = "http://$url";
+                            val videoPlayer = findViewById<VideoView>(R.id.vv_trailer)
+                            val mediaController = MediaController(this)
+                            videoPlayer.setVideoURI(Uri.parse(url))
+                            videoPlayer.setMediaController(mediaController)
+                            mediaController.setAnchorView(videoPlayer)
+                            mediaController.setMediaPlayer(videoPlayer)
+                            Log.d(tag,url)
+                            videoPlayer.start()
+
+                            trailerTitle = "Trailer:"
+                        } else {
+                            trailerTitle = "No Trailer"
+                        }
+                        findViewById<TextView>(R.id.tv_trailer_title).text = trailerTitle
+                    }
+                }
+
             }
         }
         gameDetailsViewModel.loading.observe(this) { uiState ->
@@ -98,6 +216,24 @@ class GameDetailActivity : AppCompatActivity() {
         }
         gameDetailsViewModel.error.observe(this) { error ->
             Log.d(tag, error.toString())
+        }
+    }
+    private fun onGameListClick(gameListItem: GameListItem) {
+        Log.d(tag, gameListItem.toString())
+        val intent = Intent(this, GameDetailActivity::class.java).apply {
+            putExtra(EXTRA_GAME_ID,gameListItem.id)
+        }
+        startActivity(intent)
+    }
+    private fun onStoreClick(store: Store) {
+        Log.d(tag, store.toString())
+        var url = store.store.domain
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://$url";
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        try {
+            startActivity(webIntent)
+        } catch (e: ActivityNotFoundException) {
         }
     }
 }

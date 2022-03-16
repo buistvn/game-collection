@@ -14,11 +14,13 @@ class GameRepository(
         key: String,
         search: String?,
         dates: String?,
-        ordering: String?
+        ordering: String?,
+        page_size: String?,
+        genres: String?
     ) : Result<GameList> =
         withContext(ioDispatcher) {
             try {
-                val list = service.getGameList(key, search, dates, ordering)
+                val list = service.getGameList(key, search, dates, ordering, page_size, genres)
                 Log.d("GameRepository", list.toString())
                 Result.success(list)
             } catch (e: Exception) {
@@ -34,6 +36,30 @@ class GameRepository(
             try {
                 val details = service.getGameDetails(id, key)
                 Result.success(details)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    suspend fun loadGameScreenshots(
+        game_pk: String,
+        key: String
+    ) : Result<GameScreenshots> =
+        withContext(ioDispatcher) {
+            try {
+                val screenshots = service.getGameScreenshots(game_pk, key)
+                Result.success(screenshots)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    suspend fun loadGameTrailers(
+        id: Int,
+        key: String
+    ) : Result<GameTrailer> =
+        withContext(ioDispatcher) {
+            try {
+                val trailer = service.getGameTrailers(id, key)
+                Result.success(trailer)
             } catch (e: Exception) {
                 Result.failure(e)
             }
