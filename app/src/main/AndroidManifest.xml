@@ -12,9 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GameCollection">
         <activity
-                android:name=".ui.SettingsActivity"
-                android:exported="false"
-                android:parentActivityName=".ui.MainActivity" />
+            android:name=".ui.FavoriteGamesActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.MainActivity" />
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.GameDetailActivity"
             android:exported="false"

@@ -7,6 +7,7 @@
     <string name="search_error">We cannot find the game you want. Please try another game.</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_favorites">Favorites</string>
 
     <string name="pref_category_search">Search settings</string>
     <string name="pref_sort_title">Sort by</string>
