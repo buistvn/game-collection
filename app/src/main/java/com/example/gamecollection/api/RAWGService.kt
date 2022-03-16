@@ -17,7 +17,9 @@ interface RAWGService {
         @Query("key") key: String,
         @Query("search") search: String?,
         @Query("dates") dates: String?,
-        @Query("ordering") ordering: String?
+        @Query("ordering") ordering: String?,
+        @Query("page_size") page_size: String?,
+        @Query("genres") genres: String?
     ) : GameList
 
     // Get game details on card click

@@ -14,11 +14,13 @@ class GameRepository(
         key: String,
         search: String?,
         dates: String?,
-        ordering: String?
+        ordering: String?,
+        page_size: String?,
+        genres: String?
     ) : Result<GameList> =
         withContext(ioDispatcher) {
             try {
-                val list = service.getGameList(key, search, dates, ordering)
+                val list = service.getGameList(key, search, dates, ordering, page_size, genres)
                 Log.d("GameRepository", list.toString())
                 Result.success(list)
             } catch (e: Exception) {

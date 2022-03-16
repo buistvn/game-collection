@@ -26,11 +26,13 @@ class GameSearchViewModel : ViewModel() {
         key: String,
         search: String?,
         dates: String?,
-        ordering: String?
+        ordering: String?,
+        page_size: String?,
+        genres: String?
     ) {
         viewModelScope.launch {
             _loading.value = LoadingStatus.LOADING
-            val result = repository.loadGameList(key, search, dates, ordering)
+            val result = repository.loadGameList(key, search, dates, ordering, page_size, genres)
             _results.value = result.getOrNull()
             _loading.value = when (result.isSuccess) {
                 true -> LoadingStatus.SUCCESS
