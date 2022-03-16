@@ -5,6 +5,5 @@ data class GameScreenshots (
 )
 
 data class GameScreenshot (
-    val image: String,
-    val hidden: Boolean
+    val image: String
 )

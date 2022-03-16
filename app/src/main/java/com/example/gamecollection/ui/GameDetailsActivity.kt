@@ -6,15 +6,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.gamecollection.R
 import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
@@ -152,6 +151,46 @@ class GameDetailActivity : AppCompatActivity() {
 
                 // screenshots
                 gameScreenshotsViewModel.results.observe(this) { ssResults ->
+                    val screenshots: LinearLayout = findViewById(R.id.screenshots)
+                    if (ssResults != null) {
+                        Log.d(tag, ssResults.toString())
+                        for (screenshot in ssResults!!.results) {
+                            val tempSS = ImageView(this)
+                            tempSS.layoutParams = LinearLayout.LayoutParams(
+                                800,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            )
+                            Glide.with(this)
+                                .load(screenshot.image)
+                                .into(tempSS)
+                            screenshots.addView(tempSS)
+                        }
+                    }
+                }
+
+                // trailer
+                gameTrailerViewModel.results.observe(this) { trailerResults ->
+                    if (trailerResults != null) {
+                        var trailerTitle = ""
+                        if (trailerResults.count > 0) {
+                            var url = trailerResults.results[0].data.normal
+                            if (!url.startsWith("http://") && !url.startsWith("https://"))
+                                url = "http://$url";
+                            val videoPlayer = findViewById<VideoView>(R.id.vv_trailer)
+                            val mediaController = MediaController(this)
+                            videoPlayer.setVideoURI(Uri.parse(url))
+                            videoPlayer.setMediaController(mediaController)
+                            mediaController.setAnchorView(videoPlayer)
+                            mediaController.setMediaPlayer(videoPlayer)
+                            Log.d(tag,url)
+                            videoPlayer.start()
+
+                            trailerTitle = "Trailer:"
+                        } else {
+                            trailerTitle = "No Trailer"
+                        }
+                        findViewById<TextView>(R.id.tv_trailer_title).text = trailerTitle
+                    }
                 }
 
             }
