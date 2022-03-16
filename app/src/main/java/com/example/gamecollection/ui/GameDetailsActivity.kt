@@ -1,6 +1,9 @@
 package com.example.gamecollection.ui
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,10 +13,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gamecollection.R
 import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
+import com.example.gamecollection.data.Store
 import com.google.android.material.progressindicator.CircularProgressIndicator
 
 const val EXTRA_GAME_ID = "com.example.gamecollection.GAME_ID"
@@ -24,11 +29,13 @@ class GameDetailActivity : AppCompatActivity() {
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
     private val gameSearchViewModel: GameSearchViewModel by viewModels()
     private lateinit var gameListAdapter: GameListAdapter
+    private lateinit var storeAdapter: StoresAdapter
 
     private lateinit var detailsLayout: LinearLayout
     private lateinit var searchErrorTV: TextView
     private lateinit var loadingIndicator: CircularProgressIndicator
     private lateinit var searchResultListRV: RecyclerView
+    private lateinit var storeListRV: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +45,18 @@ class GameDetailActivity : AppCompatActivity() {
         searchErrorTV = findViewById(R.id.tv_search_error)
         loadingIndicator = findViewById(R.id.loading_indicator)
         searchResultListRV = findViewById(R.id.rv_search_results)
+        storeListRV = findViewById(R.id.rv_stores)
 
         gameListAdapter = GameListAdapter(::onGameListClick)
+        storeAdapter = StoresAdapter(::onStoreClick)
         searchResultListRV.layoutManager = GridLayoutManager(this,2)
         searchResultListRV.setHasFixedSize(true)
 
+        storeListRV.layoutManager = LinearLayoutManager(this)
+        storeListRV.setHasFixedSize(true)
+
         searchResultListRV.adapter = gameListAdapter
+        storeListRV.adapter = storeAdapter
 
         gameSearchViewModel.results.observe(this) { results ->
             gameListAdapter.updateRepoList(results)
@@ -117,6 +130,14 @@ class GameDetailActivity : AppCompatActivity() {
                         desc.text = short
                     }
                 }
+
+                storeAdapter.updateStoreList(results.stores)
+                val stores: TextView = findViewById(R.id.tv_stores)
+
+                val noStores = "Not found in stores"
+                val yesStores = "Stores:"
+                if (results.stores.isNullOrEmpty()) stores.text = noStores
+                else stores.text = yesStores
             }
         }
         gameDetailsViewModel.loading.observe(this) { uiState ->
@@ -148,5 +169,16 @@ class GameDetailActivity : AppCompatActivity() {
             putExtra(EXTRA_GAME_ID,gameListItem.id)
         }
         startActivity(intent)
+    }
+    private fun onStoreClick(store: Store) {
+        Log.d(tag, store.toString())
+        var url = store.store.domain
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://$url";
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        try {
+            startActivity(webIntent)
+        } catch (e: ActivityNotFoundException) {
+        }
     }
 }
