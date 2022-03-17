@@ -16,11 +16,12 @@ class GameRepository(
         dates: String?,
         ordering: String?,
         page_size: String?,
-        genres: String?
+        genres: String?,
+        developers: String?
     ) : Result<GameList> =
         withContext(ioDispatcher) {
             try {
-                val list = service.getGameList(key, search, dates, ordering, page_size, genres)
+                val list = service.getGameList(key, search, dates, ordering, page_size, genres, developers)
                 Log.d("GameRepository", list.toString())
                 Result.success(list)
             } catch (e: Exception) {
@@ -64,4 +65,17 @@ class GameRepository(
                 Result.failure(e)
             }
         }
+
+    suspend fun loadDeveloperDetails(
+        id: Int,
+        key: String
+    ): Result<DeveloperDetails> =
+    withContext(ioDispatcher) {
+        try {
+            val details = service.getDeveloperDetails(id, key)
+            Result.success(details)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

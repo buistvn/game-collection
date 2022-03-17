@@ -1,5 +1,7 @@
 package com.example.gamecollection.data
 
+import java.io.Serializable
+
 data class GameDetails(
     val id: Int,
     val name: String,
@@ -12,7 +14,7 @@ data class GameDetails(
     val genres: List<Genre?>,
     val tags: List<Tag?>,
     val esrb_rating: ESRBRating?
-)
+) :Serializable
 
 data class Store(
     val store: StoreDetails
