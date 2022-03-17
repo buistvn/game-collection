@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         searchErrorTV = findViewById(R.id.tv_search_error)
         loadingIndicator = findViewById(R.id.loading_indicator)
 
-        gameListAdapter = GameListAdapter(::onGameListClick)
+        gameListAdapter = GameListAdapter(::onGameListItemClick)
 
         searchResultListRV.layoutManager = GridLayoutManager(this,2)
         searchResultListRV.setHasFixedSize(true)
@@ -52,11 +52,11 @@ class MainActivity : AppCompatActivity() {
         searchResultListRV.adapter = gameListAdapter
 
         gameSearchViewModel.results.observe(this) { results ->
-            gameListAdapter.updateRepoList(results)
+            gameListAdapter.updateGameListItems(results?.results)
         }
 
-        gameSearchViewModel.loading.observe(this){ loading->
-            when(loading){
+        gameSearchViewModel.loading.observe(this) { loading->
+            when(loading) {
                 LoadingStatus.LOADING -> {
                     loadingIndicator.visibility = View.VISIBLE
                     searchResultListRV.visibility = View.INVISIBLE
@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         // Results on start are the most popular games in 2021
         gameSearchViewModel.loadResults(RAWG_API_KEY, null, "2021-01-01,2021-12-31", "-added", "30", null)
     }
+
     override fun onResume() {
         Log.d(tag, "onResume()")
         super.onResume()
@@ -125,14 +126,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_main, menu)
         return true
-    }
-
-    private fun onGameListClick(gameListItem: GameListItem) {
-        Log.d(tag, gameListItem.toString())
-        val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_ID,gameListItem.id)
-        }
-        startActivity(intent)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -149,5 +142,13 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun onGameListItemClick(gameListItem: GameListItem) {
+        Log.d(tag, gameListItem.toString())
+        val intent = Intent(this, GameDetailActivity::class.java).apply {
+            putExtra(EXTRA_GAME_ID,gameListItem.id)
+        }
+        startActivity(intent)
     }
 }

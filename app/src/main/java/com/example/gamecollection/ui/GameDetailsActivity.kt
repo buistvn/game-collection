@@ -60,7 +60,7 @@ class GameDetailActivity : AppCompatActivity() {
         storeListRV.adapter = storeAdapter
 
         gameSearchViewModel.results.observe(this) { results ->
-            gameListAdapter.updateRepoList(results)
+            gameListAdapter.updateGameListItems(results?.results)
         }
 
         if (intent != null && intent.hasExtra(EXTRA_GAME_ID)) {
