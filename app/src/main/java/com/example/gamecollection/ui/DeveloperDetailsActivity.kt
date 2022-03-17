@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.gamecollection.R
 import com.example.gamecollection.api.RAWGService
 import com.example.gamecollection.data.GameListItem
@@ -60,16 +61,22 @@ class DeveloperDetailsActivity : AppCompatActivity() {
 
         developerViewModel.results.observe(this) { results ->
             if (results != null) {
-
+                val games = results.games
                 findViewById<TextView>(R.id.Developer_Name).text = results.name
-                findViewById<TextView>(R.id.developer_games).text = "Games by this Developer:"
+                findViewById<TextView>(R.id.developer_games).text = "Total Games by this Developer: \t#"+ games.toString()
+
+
+                Glide.with(this)
+                    .load(results.background_image)
+                    .into(findViewById(R.id.dev_image))
 
                 if(results.description.isNullOrEmpty()){
-                    findViewById<TextView>(R.id.Developer_Details).text = "There is no description for this developer"
+                    findViewById<TextView>(R.id.Developer_Details).text = ""
+                    findViewById<TextView>(R.id.Developer_Details).visibility = View.INVISIBLE
                 }else {
                     val desc: TextView = findViewById(R.id.Developer_Details)
                     val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                    val size = if (long.length < 300) long.length else 300
+                    val size = if (long.length < 200) long.length else 200
                     val temp = long.chunked(size)[0].split(".").toMutableList()
                     val shortI = temp.joinToString(".")
                     val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI...") else long
@@ -82,8 +89,7 @@ class DeveloperDetailsActivity : AppCompatActivity() {
                         }
                     }
                 }
-                val games = results.games
-                findViewById<TextView>(R.id.Developer_Game_Count).text = "Games#\n"+ games.toString()
+
 
                 if (games > 20){
                     gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "20", null, developerID.toString())
