@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/scroll_view"
     tools:context=".ui.GameDetailActivity">
 
     <FrameLayout
@@ -81,14 +82,10 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp" />
-            <FrameLayout
+            <TextureView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <VideoView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/vv_trailer"/>
-            </FrameLayout>
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_trailer"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -134,13 +131,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:background="#0000"
                     android:id="@+id/screenshots"/>
             </HorizontalScrollView>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:text="Similar Games:"
+                android:text="Games from Similar Genres:"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
