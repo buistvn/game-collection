@@ -250,6 +250,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
             mediaPlayer.setOnPreparedListener {
                 start()
                 mediaController.isEnabled
+                pause()
                 mediaController.show()
             }
         } catch (e: IOException) { e.printStackTrace() }
