@@ -2,9 +2,14 @@ package com.example.gamecollection.ui
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.SurfaceTexture
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Surface
+import android.view.TextureView
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
@@ -19,10 +24,11 @@ import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
 import com.example.gamecollection.data.Store
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import java.io.IOException
 
 const val EXTRA_GAME_ID = "com.example.gamecollection.GAME_ID"
 
-class GameDetailActivity : AppCompatActivity() {
+class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, MediaController.MediaPlayerControl {
     private val tag = "GameDetailActivity"
     private var gameID: Int? = null
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
@@ -38,9 +44,16 @@ class GameDetailActivity : AppCompatActivity() {
     private lateinit var searchResultListRV: RecyclerView
     private lateinit var storeListRV: RecyclerView
 
+    private lateinit var textureView: TextureView
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var url: String
+    private lateinit var mediaController: MediaController
+    private lateinit var scrollView: ScrollView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_details)
+        scrollView = findViewById(R.id.scroll_view)
 
         detailsLayout = findViewById(R.id.details)
         searchErrorTV = findViewById(R.id.tv_search_error)
@@ -154,7 +167,7 @@ class GameDetailActivity : AppCompatActivity() {
                     val screenshots: LinearLayout = findViewById(R.id.screenshots)
                     if (ssResults != null) {
                         Log.d(tag, ssResults.toString())
-                        for (screenshot in ssResults!!.results) {
+                        for (screenshot in ssResults.results) {
                             val tempSS = ImageView(this)
                             tempSS.layoutParams = LinearLayout.LayoutParams(
                                 800,
@@ -173,17 +186,25 @@ class GameDetailActivity : AppCompatActivity() {
                     if (trailerResults != null) {
                         var trailerTitle = ""
                         if (trailerResults.count > 0) {
-                            var url = trailerResults.results[0].data.normal
+                            url = trailerResults.results[0].data.normal
                             if (!url.startsWith("http://") && !url.startsWith("https://"))
-                                url = "http://$url";
-                            val videoPlayer = findViewById<VideoView>(R.id.vv_trailer)
-                            val mediaController = MediaController(this)
-                            videoPlayer.setVideoURI(Uri.parse(url))
-                            videoPlayer.setMediaController(mediaController)
-                            mediaController.setAnchorView(videoPlayer)
-                            mediaController.setMediaPlayer(videoPlayer)
-                            Log.d(tag,url)
-                            videoPlayer.start()
+                                url = "http://$url"
+
+                            mediaPlayer = MediaPlayer().apply {
+                                setAudioAttributes(
+                                    AudioAttributes.Builder()
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .build()
+                                )
+                                setDataSource(url)
+                                prepare() // might take long! (for buffering, etc)
+                            }
+                            textureView = findViewById(R.id.tv_trailer)
+                            textureView.surfaceTextureListener = this
+                            textureView.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 600)
+
+                            mediaController = MediaController(this)
 
                             trailerTitle = "Trailer:"
                         } else {
@@ -218,6 +239,28 @@ class GameDetailActivity : AppCompatActivity() {
             Log.d(tag, error.toString())
         }
     }
+
+    override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
+        val surface = Surface(surfaceTexture)
+        Log.d("hihihi", url)
+        mediaController.setAnchorView(textureView)
+        try {
+            mediaController.setMediaPlayer(this)
+            mediaPlayer.setSurface(surface)
+            mediaPlayer.setOnPreparedListener {
+                start()
+                mediaController.isEnabled
+                mediaController.show()
+            }
+        } catch (e: IOException) { e.printStackTrace() }
+        textureView.setOnClickListener { mediaController.show() }
+        scrollView.viewTreeObserver.addOnScrollChangedListener { mediaController.hide() }
+    }
+    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+        return false
+    }
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
     private fun onGameListClick(gameListItem: GameListItem) {
         Log.d(tag, gameListItem.toString())
         val intent = Intent(this, GameDetailActivity::class.java).apply {
@@ -229,11 +272,55 @@ class GameDetailActivity : AppCompatActivity() {
         Log.d(tag, store.toString())
         var url = store.store.domain
         if (!url.startsWith("http://") && !url.startsWith("https://"))
-            url = "http://$url";
+            url = "http://$url"
         val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         try {
             startActivity(webIntent)
         } catch (e: ActivityNotFoundException) {
         }
+    }
+
+    override fun start() {
+        mediaPlayer.start()
+    }
+
+    override fun pause() {
+        mediaPlayer.pause()
+    }
+
+    override fun getDuration(): Int {
+        return mediaPlayer.duration
+    }
+
+    override fun getCurrentPosition(): Int {
+        return mediaPlayer.currentPosition
+    }
+
+    override fun seekTo(p0: Int) {
+        mediaPlayer.seekTo(p0)
+    }
+
+    override fun isPlaying(): Boolean {
+        return mediaPlayer.isPlaying
+    }
+
+    override fun getBufferPercentage(): Int {
+        return 0
+    }
+
+    override fun canPause(): Boolean {
+        return true
+    }
+
+    override fun canSeekBackward(): Boolean {
+        return true
+    }
+
+    override fun canSeekForward(): Boolean {
+        return true
+    }
+
+    override fun getAudioSessionId(): Int {
+        return mediaPlayer.audioSessionId
     }
 }
