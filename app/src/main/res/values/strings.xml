@@ -6,7 +6,11 @@
 
     <string name="search_error">We cannot find the game you want. Please try another game.</string>
 
+    <string name="favorite_off">Add to Favorites</string>
+    <string name="favorite_on">Added</string>
+
     <string name="action_settings">Settings</string>
+    <string name="action_favorites">Favorites</string>
 
     <string name="pref_category_search">Search settings</string>
     <string name="pref_sort_title">Sort by</string>
@@ -35,6 +39,6 @@
     <string name="pref_sort_val_rating">-rating</string>
     <string name="pref_sort_val_metacritic">-metacritic</string>
 
-    <string name="pref_sort_default">@string/pref_sort_val_rating</string>
+    <string name="pref_sort_default">@string/pref_sort_val_none</string>
 
 </resources>
