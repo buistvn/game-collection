@@ -34,14 +34,13 @@ class DeveloperDetailsActivity : AppCompatActivity() {
     private lateinit var searchErrorTV: TextView
     private lateinit var holder: LinearLayout
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_developer_details)
 
         loadingIndicator = findViewById(R.id.developer_loading_indicator)
         searchResultListRV = findViewById(R.id.developer_RV)
-        gameListAdapter = GameListAdapter(::onGameListClick)
+        gameListAdapter = GameListAdapter(::onGameListItemClick)
         searchErrorTV = findViewById(R.id.developer_search_error)
         holder = findViewById(R.id.developer_view)
 
@@ -50,7 +49,7 @@ class DeveloperDetailsActivity : AppCompatActivity() {
         searchResultListRV.adapter = gameListAdapter
 
         gameSearchViewModel.results.observe(this) { results ->
-            gameListAdapter.updateRepoList(results)
+            gameListAdapter.updateGameListItems(results?.results)
         }
 
         if (intent != null && intent.hasExtra(EXTRA_DEVELOPER_ID)) {
@@ -94,12 +93,8 @@ class DeveloperDetailsActivity : AppCompatActivity() {
                 else{
                     gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, (games - 1).toString(), null, developerID.toString())
                 }
-
-
-
             }
         }
-
 
         gameSearchViewModel.loading.observe(this){ loading->
             when(loading){
@@ -122,11 +117,10 @@ class DeveloperDetailsActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun onGameListClick(gameListItem: GameListItem) {
+    private fun onGameListItemClick(gameListItem: GameListItem) {
         Log.d(tag, gameListItem.toString())
         val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_ID,gameListItem.id)
+            putExtra(EXTRA_GAME_LIST_ITEM, gameListItem)
         }
         startActivity(intent)
     }
