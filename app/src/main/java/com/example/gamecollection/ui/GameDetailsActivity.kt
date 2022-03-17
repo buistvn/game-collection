@@ -23,18 +23,23 @@ import com.example.gamecollection.R
 import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
 import com.example.gamecollection.data.Store
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import java.io.IOException
 
-const val EXTRA_GAME_ID = "com.example.gamecollection.GAME_ID"
+const val EXTRA_GAME_LIST_ITEM = "com.example.gamecollection.GAME_LIST_ITEM"
 
 class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, MediaController.MediaPlayerControl {
     private val tag = "GameDetailActivity"
-    private var gameID: Int? = null
+    private var gameListItem: GameListItem? = null
+    private var isFavorite = false
+
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
     private val gameSearchViewModel: GameSearchViewModel by viewModels()
     private val gameScreenshotsViewModel: GameScreenshotsViewModel by viewModels()
     private val gameTrailerViewModel: GameTrailerViewModel by viewModels()
+    private val favoriteGamesViewModel: FavoriteGamesViewModel by viewModels()
+
     private lateinit var gameListAdapter: GameListAdapter
     private lateinit var storeAdapter: StoresAdapter
 
@@ -43,6 +48,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
     private lateinit var loadingIndicator: CircularProgressIndicator
     private lateinit var searchResultListRV: RecyclerView
     private lateinit var storeListRV: RecyclerView
+    private lateinit var favoriteButton: MaterialButton
 
     private lateinit var textureView: TextureView
     private lateinit var mediaPlayer: MediaPlayer
@@ -60,6 +66,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
         loadingIndicator = findViewById(R.id.loading_indicator)
         searchResultListRV = findViewById(R.id.rv_search_results)
         storeListRV = findViewById(R.id.rv_stores)
+        favoriteButton = findViewById(R.id.bt_favorite)
 
         gameListAdapter = GameListAdapter(::onGameListClick)
         storeAdapter = StoresAdapter(::onStoreClick)
@@ -73,16 +80,17 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
         storeListRV.adapter = storeAdapter
 
         gameSearchViewModel.results.observe(this) { results ->
-            gameListAdapter.updateRepoList(results)
+            gameListAdapter.updateGameListItems(results?.results)
         }
 
-        if (intent != null && intent.hasExtra(EXTRA_GAME_ID)) {
-            gameID = intent.getSerializableExtra(EXTRA_GAME_ID) as Int
-            Log.d(tag, gameID!!.toString())
-            gameDetailsViewModel.loadResults(gameID!!, RAWG_API_KEY)
-            gameScreenshotsViewModel.loadResults(gameID!!.toString(), RAWG_API_KEY)
-            gameTrailerViewModel.loadResults(gameID!!, RAWG_API_KEY)
+        if (intent != null && intent.hasExtra(EXTRA_GAME_LIST_ITEM)) {
+            gameListItem = intent.getSerializableExtra(EXTRA_GAME_LIST_ITEM) as GameListItem
+            Log.d(tag, gameListItem!!.toString())
+            gameDetailsViewModel.loadResults(gameListItem!!.id, RAWG_API_KEY)
+            gameScreenshotsViewModel.loadResults(gameListItem!!.id.toString(), RAWG_API_KEY)
+            gameTrailerViewModel.loadResults(gameListItem!!.id, RAWG_API_KEY)
         }
+
         gameDetailsViewModel.results.observe(this) { results ->
             if (results != null) {
                 // genres
@@ -216,6 +224,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
 
             }
         }
+
         gameDetailsViewModel.loading.observe(this) { uiState ->
             when(uiState){
                 LoadingStatus.LOADING -> {
@@ -235,8 +244,38 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 }
             }
         }
+
         gameDetailsViewModel.error.observe(this) { error ->
             Log.d(tag, error.toString())
+        }
+
+        favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(this) { favoriteGame ->
+            when (favoriteGame) {
+                null -> {
+                    isFavorite = false
+                    favoriteButton.setText(R.string.favorite_off)
+                    favoriteButton.setIconResource(R.drawable.ic_button_favorite_off)
+                }
+                else -> {
+                    isFavorite = true
+                    favoriteButton.setText(R.string.favorite_on)
+                    favoriteButton.setIconResource(R.drawable.ic_button_favorite_on)
+                }
+            }
+        }
+
+        favoriteButton.setOnClickListener {
+            if (gameListItem != null) {
+                isFavorite = !isFavorite
+                when (isFavorite) {
+                    true -> {
+                        favoriteGamesViewModel.addFavoriteGame(gameListItem!!)
+                    }
+                    false -> {
+                        favoriteGamesViewModel.removeFavoriteGame(gameListItem!!)
+                    }
+                }
+            }
         }
     }
 
@@ -262,13 +301,15 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
         return false
     }
     override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+
     private fun onGameListClick(gameListItem: GameListItem) {
         Log.d(tag, gameListItem.toString())
         val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_ID,gameListItem.id)
+            putExtra(EXTRA_GAME_LIST_ITEM, gameListItem)
         }
         startActivity(intent)
     }
+
     private fun onStoreClick(store: Store) {
         Log.d(tag, store.toString())
         var url = store.store.domain

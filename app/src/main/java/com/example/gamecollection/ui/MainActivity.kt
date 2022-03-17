@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         searchErrorTV = findViewById(R.id.tv_search_error)
         loadingIndicator = findViewById(R.id.loading_indicator)
 
-        gameListAdapter = GameListAdapter(::onGameListClick)
+        gameListAdapter = GameListAdapter(::onGameListItemClick)
 
         searchResultListRV.layoutManager = GridLayoutManager(this,2)
         searchResultListRV.setHasFixedSize(true)
@@ -52,11 +52,11 @@ class MainActivity : AppCompatActivity() {
         searchResultListRV.adapter = gameListAdapter
 
         gameSearchViewModel.results.observe(this) { results ->
-            gameListAdapter.updateRepoList(results)
+            gameListAdapter.updateGameListItems(results?.results)
         }
 
-        gameSearchViewModel.loading.observe(this){ loading->
-            when(loading){
+        gameSearchViewModel.loading.observe(this) { loading->
+            when(loading) {
                 LoadingStatus.LOADING -> {
                     loadingIndicator.visibility = View.VISIBLE
                     searchResultListRV.visibility = View.INVISIBLE
@@ -99,12 +99,11 @@ class MainActivity : AppCompatActivity() {
 
                 val year = "$beginYear-01-01,$endYear-12-31"
                 if (sort == "none") sort = null
-                if(!isEmpty(beginYear)&&!isEmpty(endYear)){
+                if (!isEmpty(beginYear) && !isEmpty(endYear)) {
                     gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, year, sort, "30", null)
                 }
-                //val datePicker = findViewById<DatePicker>(R.id.date_Picker)
-                // Results on search are from the user's input
                 else {
+                    // Results on search are from the user's input
                     gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, null, sort, "30",null)
                 }
             }
@@ -113,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         // Results on start are the most popular games in 2021
         gameSearchViewModel.loadResults(RAWG_API_KEY, null, "2021-01-01,2021-12-31", "-added", "30", null)
     }
+
     override fun onResume() {
         Log.d(tag, "onResume()")
         super.onResume()
@@ -128,16 +128,13 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun onGameListClick(gameListItem: GameListItem) {
-        Log.d(tag, gameListItem.toString())
-        val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_ID,gameListItem.id)
-        }
-        startActivity(intent)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_favorites -> {
+                val intent = Intent(this, FavoriteGamesActivity::class.java)
+                startActivity(intent)
+                true
+            }
             R.id.action_settings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
@@ -147,4 +144,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun onGameListItemClick(gameListItem: GameListItem) {
+        Log.d(tag, gameListItem.toString())
+        val intent = Intent(this, GameDetailActivity::class.java).apply {
+            putExtra(EXTRA_GAME_LIST_ITEM, gameListItem)
+        }
+        startActivity(intent)
+    }
 }

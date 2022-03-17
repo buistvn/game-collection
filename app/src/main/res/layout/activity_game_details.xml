@@ -46,6 +46,15 @@
                     android:id="@+id/tv_released"/>
             </LinearLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bt_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/favorite_off"
+                android:backgroundTint="@color/red_500"
+                app:icon="@drawable/ic_button_favorite_off"
+                style="@style/Widget.MaterialComponents.Button.Icon" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
