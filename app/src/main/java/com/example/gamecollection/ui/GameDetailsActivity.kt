@@ -249,8 +249,8 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
             Log.d(tag, error.toString())
         }
 
-        favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(this) { favoritedGame ->
-            when (favoritedGame) {
+        favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(this) { favoriteGame ->
+            when (favoriteGame) {
                 null -> {
                     isFavorite = false
                     favoriteButton.setText(R.string.favorite_off)

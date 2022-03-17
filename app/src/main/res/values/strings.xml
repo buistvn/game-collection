@@ -39,6 +39,6 @@
     <string name="pref_sort_val_rating">-rating</string>
     <string name="pref_sort_val_metacritic">-metacritic</string>
 
-    <string name="pref_sort_default">@string/pref_sort_val_rating</string>
+    <string name="pref_sort_default">@string/pref_sort_val_none</string>
 
 </resources>
