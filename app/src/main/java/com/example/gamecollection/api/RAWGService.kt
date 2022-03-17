@@ -18,7 +18,8 @@ interface RAWGService {
         @Query("dates") dates: String?,
         @Query("ordering") ordering: String?,
         @Query("page_size") page_size: String?,
-        @Query("genres") genres: String?
+        @Query("genres") genres: String?,
+        @Query("developers") developers: String?
     ) : GameList
 
     // Get game details on card click
@@ -41,6 +42,13 @@ interface RAWGService {
         @Path("id", encoded = true) id: Int,
         @Query("key") key: String
     ) : GameTrailer
+
+    // Get developer details
+    @GET("/api/developers/{id}")
+    suspend fun getDeveloperDetails(
+        @Path("id", encoded = true) id: Int,
+        @Query("key") key: String
+    ) : DeveloperDetails
 
     companion object {
         private const val BASE_URL = "https://api.rawg.io"

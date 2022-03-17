@@ -20,11 +20,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.gamecollection.R
+import com.example.gamecollection.data.GameDetails
 import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
 import com.example.gamecollection.data.Store
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import org.w3c.dom.Text
 import java.io.IOException
 
 const val EXTRA_GAME_LIST_ITEM = "com.example.gamecollection.GAME_LIST_ITEM"
@@ -106,11 +108,20 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 }
                 ids = ids.dropLast(2)
                 genres = genres.dropLast(2)
-                gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids)
+                gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids, null)
                 findViewById<TextView>(R.id.tv_genres).text = genres
 
                 // title
                 findViewById<TextView>(R.id.tv_game_title).text = results.name
+
+                // developer
+                val developer: TextView = findViewById(R.id.developer)
+                developer.text = "Developed by " + results.developers[0]?.name
+                developer.setOnClickListener {
+                    startDeveloperActivity(results)
+                }
+
+
 
                 // rating
                 val rating = "Rating: " + results.rating.toString() + "/5"
@@ -278,6 +289,16 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
             }
         }
     }
+
+    private fun startDeveloperActivity(dev : GameDetails) {
+        Log.d("Start Dev Intent: ", dev.developers[0]?.name.toString())
+        val intent = Intent(this, DeveloperDetailsActivity::class.java).apply {
+            putExtra(EXTRA_DEVELOPER_ID,dev.developers[0]?.id)
+        }
+
+        startActivity(intent)
+    }
+
 
     override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
         val surface = Surface(surfaceTexture)

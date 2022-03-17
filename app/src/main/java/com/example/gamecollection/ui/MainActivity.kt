@@ -100,17 +100,42 @@ class MainActivity : AppCompatActivity() {
                 val year = "$beginYear-01-01,$endYear-12-31"
                 if (sort == "none") sort = null
                 if (!isEmpty(beginYear) && !isEmpty(endYear)) {
-                    gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, year, sort, "30", null)
+                    // Results on search are from the user's input
+                    gameSearchViewModel.loadResults(
+                        RAWG_API_KEY,
+                        searchQuery,
+                        year,
+                        sort,
+                        "30",
+                        null,
+                        null
+                    )
                 }
                 else {
                     // Results on search are from the user's input
-                    gameSearchViewModel.loadResults(RAWG_API_KEY, searchQuery, null, sort, "30",null)
+                    gameSearchViewModel.loadResults(
+                        RAWG_API_KEY,
+                        searchQuery,
+                        null,
+                        sort,
+                        "30",
+                        null,
+                        null
+                    )
                 }
             }
         }
 
         // Results on start are the most popular games in 2021
-        gameSearchViewModel.loadResults(RAWG_API_KEY, null, "2021-01-01,2021-12-31", "-added", "30", null)
+        gameSearchViewModel.loadResults(
+            RAWG_API_KEY,
+            null,
+            "2021-01-01,2021-12-31",
+            "-added",
+            "30",
+            null,
+            null
+        )
     }
 
     override fun onResume() {

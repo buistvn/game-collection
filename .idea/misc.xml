@@ -3,6 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/layout/activity_developer_details.xml" value="0.15" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/layout/activity_game_details.xml" value="0.2441123188405797" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/layout/activity_main.xml" value="0.2441123188405797" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/layout/activity_setting.xml" value="0.14270833333333333" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/layout/game_list_item.xml" value="0.2441123188405797" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/layout/store_item.xml" value="0.2441123188405797" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/menu/activity_main.xml" value="0.15677083333333333" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.17291666666666666" />
+        <entry key="..\:/4berr/Desktop/College Books/Winter 2022/cs 492/final-project-team-16/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.17291666666666666" />
         <entry key="..\:/Mobile-Dev/capstone/app/src/main/res/layout/activity_game_details.xml" value="0.23278985507246377" />
         <entry key="..\:/Mobile-Dev/capstone/app/src/main/res/layout/description_long.xml" value="0.23278985507246377" />
         <entry key="..\:/Mobile-Dev/final/app/src/main/res/layout/activity_game_details.xml" value="0.1" />
@@ -10,7 +19,6 @@
         <entry key="..\:/Mobile-Dev/final/app/src/main/res/layout/game_list_item.xml" value="0.2667572463768116" />
         <entry key="..\:/Mobile-Dev/final/app/src/main/res/layout/store_item.xml" value="0.2667572463768116" />
         <entry key="..\:/Mobile-Dev/final/app/src/main/res/xml/settings.xml" value="0.2667572463768116" />
-        <entry key="..\:/OSU-2022/Mobile-Dev/final/app/src/main/res/layout/activity_game_details.xml" value="0.2520833333333333" />
         <entry key="..\:/Users/GYF/IdeaProjects/final-project-team-16/app/src/main/res/drawable-anydpi/ic_action_name.xml" value="0.3145833333333333" />
         <entry key="..\:/Users/GYF/IdeaProjects/final-project-team-16/app/src/main/res/layout/activity_game_details.xml" value="0.2984375" />
         <entry key="..\:/Users/GYF/IdeaProjects/final-project-team-16/app/src/main/res/layout/activity_main.xml" value="0.2984375" />
