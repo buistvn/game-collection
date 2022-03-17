@@ -18,6 +18,7 @@ import com.example.gamecollection.R
 import com.example.gamecollection.data.GameListItem
 import com.example.gamecollection.data.LoadingStatus
 import com.example.gamecollection.data.Store
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 
 const val EXTRA_GAME_LIST_ITEM = "com.example.gamecollection.GAME_LIST_ITEM"
@@ -25,7 +26,7 @@ const val EXTRA_GAME_LIST_ITEM = "com.example.gamecollection.GAME_LIST_ITEM"
 class GameDetailActivity : AppCompatActivity() {
     private val tag = "GameDetailActivity"
     private var gameListItem: GameListItem? = null
-    private var isFavorited = false
+    private var isFavorite = false
 
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
     private val gameSearchViewModel: GameSearchViewModel by viewModels()
@@ -41,7 +42,7 @@ class GameDetailActivity : AppCompatActivity() {
     private lateinit var loadingIndicator: CircularProgressIndicator
     private lateinit var searchResultListRV: RecyclerView
     private lateinit var storeListRV: RecyclerView
-    private lateinit var favoriteButton: Button
+    private lateinit var favoriteButton: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -230,20 +231,22 @@ class GameDetailActivity : AppCompatActivity() {
         favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(this) { favoritedGame ->
             when (favoritedGame) {
                 null -> {
-                    isFavorited = false
-                    // change button to off
+                    isFavorite = false
+                    favoriteButton.setText(R.string.favorite_off)
+                    favoriteButton.setIconResource(R.drawable.ic_button_favorite_off)
                 }
                 else -> {
-                    isFavorited = true
-                    // change button to on
+                    isFavorite = true
+                    favoriteButton.setText(R.string.favorite_on)
+                    favoriteButton.setIconResource(R.drawable.ic_button_favorite_on)
                 }
             }
         }
 
         favoriteButton.setOnClickListener {
             if (gameListItem != null) {
-                isFavorited = !isFavorited
-                when (isFavorited) {
+                isFavorite = !isFavorite
+                when (isFavorite) {
                     true -> {
                         favoriteGamesViewModel.addFavoriteGame(gameListItem!!)
                     }
