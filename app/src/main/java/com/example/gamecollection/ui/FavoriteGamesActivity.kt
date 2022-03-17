@@ -34,7 +34,7 @@ class FavoriteGamesActivity : AppCompatActivity() {
 
     private fun onGameListItemClick(gameListItem: GameListItem) {
         val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_ID,gameListItem.id)
+            putExtra(EXTRA_GAME_LIST_ITEM, gameListItem)
         }
         startActivity(intent)
     }

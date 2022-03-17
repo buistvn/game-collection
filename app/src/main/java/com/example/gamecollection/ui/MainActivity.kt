@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
     private fun onGameListItemClick(gameListItem: GameListItem) {
         Log.d(tag, gameListItem.toString())
         val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_ID,gameListItem.id)
+            putExtra(EXTRA_GAME_LIST_ITEM, gameListItem)
         }
         startActivity(intent)
     }
