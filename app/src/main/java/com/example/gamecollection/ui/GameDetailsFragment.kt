@@ -13,8 +13,9 @@ import android.view.TextureView
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,13 +27,11 @@ import com.example.gamecollection.data.LoadingStatus
 import com.example.gamecollection.data.Store
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import org.w3c.dom.Text
 import java.io.IOException
 
-const val EXTRA_GAME_LIST_ITEM = "com.example.gamecollection.GAME_LIST_ITEM"
+class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.SurfaceTextureListener, MediaController.MediaPlayerControl {
+    private val TAG = "GameDetailsFragment"
 
-class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, MediaController.MediaPlayerControl {
-    private val tag = "GameDetailActivity"
     private var gameListItem: GameListItem? = null
     private var isFavorite = false
 
@@ -58,33 +57,33 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
     private lateinit var mediaController: MediaController
     private lateinit var scrollView: ScrollView
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game_details)
-        scrollView = findViewById(R.id.scroll_view)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        detailsLayout = findViewById(R.id.details)
-        searchErrorTV = findViewById(R.id.tv_search_error)
-        loadingIndicator = findViewById(R.id.loading_indicator)
-        searchResultListRV = findViewById(R.id.rv_search_results)
-        storeListRV = findViewById(R.id.rv_stores)
-        favoriteButton = findViewById(R.id.bt_favorite)
+        scrollView = view.findViewById(R.id.scroll_view)
+        detailsLayout = view.findViewById(R.id.details)
+        searchErrorTV = view.findViewById(R.id.tv_search_error)
+        loadingIndicator = view.findViewById(R.id.loading_indicator)
+        searchResultListRV = view.findViewById(R.id.rv_search_results)
+        storeListRV = view.findViewById(R.id.rv_stores)
+        favoriteButton = view.findViewById(R.id.bt_favorite)
 
         gameListAdapter = GameListAdapter(::onGameListClick)
         storeAdapter = StoresAdapter(::onStoreClick)
-        searchResultListRV.layoutManager = GridLayoutManager(this,2)
+
+        searchResultListRV.layoutManager = GridLayoutManager(requireContext(), 2)
         searchResultListRV.setHasFixedSize(true)
-
-        storeListRV.layoutManager = LinearLayoutManager(this)
-        storeListRV.setHasFixedSize(true)
-
         searchResultListRV.adapter = gameListAdapter
+
+        storeListRV.layoutManager = LinearLayoutManager(requireContext())
+        storeListRV.setHasFixedSize(true)
         storeListRV.adapter = storeAdapter
 
-        gameSearchViewModel.results.observe(this) { results ->
+        gameSearchViewModel.results.observe(viewLifecycleOwner) { results ->
             gameListAdapter.updateGameListItems(results?.results)
         }
 
+        /*
         if (intent != null && intent.hasExtra(EXTRA_GAME_LIST_ITEM)) {
             gameListItem = intent.getSerializableExtra(EXTRA_GAME_LIST_ITEM) as GameListItem
             Log.d(tag, gameListItem!!.toString())
@@ -92,8 +91,9 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
             gameScreenshotsViewModel.loadResults(gameListItem!!.id.toString(), RAWG_API_KEY)
             gameTrailerViewModel.loadResults(gameListItem!!.id, RAWG_API_KEY)
         }
+        */
 
-        gameDetailsViewModel.results.observe(this) { results ->
+        gameDetailsViewModel.results.observe(viewLifecycleOwner) { results ->
             if (results != null) {
                 // genres
                 var x = 0
@@ -110,37 +110,37 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 genres = genres.dropLast(2)
                 genres = "$genres)"
                 gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids, null)
-                findViewById<TextView>(R.id.tv_genres).text = genres
+                view.findViewById<TextView>(R.id.tv_genres).text = genres
 
                 // title
-                val title = findViewById<TextView>(R.id.tv_game_title)
+                val title = view.findViewById<TextView>(R.id.tv_game_title)
                 val gameName = results.name
                 title.text = gameName
 
                 // developer
-                val developer: TextView = findViewById(R.id.tv_developer)
+                val developer: TextView = view.findViewById(R.id.tv_developer)
                 val developerText = "Developed by " + results.developers[0]?.name
                 developer.text = developerText
                 developer.setOnClickListener {
-                    startDeveloperActivity(results)
+                    onDeveloperClick(results)
                 }
 
                 // background
-                val background = findViewById<ImageView>(R.id.iv_background)
+                val background = view.findViewById<ImageView>(R.id.iv_background)
                 Glide.with(this)
                     .load(results.background_image)
                     .into(background)
 
                 // rating
                 val rating = "Rating: " + results.rating.toString() + "/5"
-                findViewById<TextView>(R.id.tv_rating).text = rating
+                view.findViewById<TextView>(R.id.tv_rating).text = rating
 
                 // release date
                 val releasedDate = "Released in " + results.released.take(4)
-                findViewById<TextView>(R.id.tv_released).text = releasedDate
+                view.findViewById<TextView>(R.id.tv_released).text = releasedDate
 
                 // tags
-                val tags: TextView = findViewById(R.id.tv_tags)
+                val tags: TextView = view.findViewById(R.id.tv_tags)
                 if (results.tags.isNullOrEmpty()) {
                     tags.text = "No tags"
                 } else {
@@ -165,7 +165,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 }
 
                 // description
-                val desc: TextView = findViewById(R.id.tv_description)
+                val desc: TextView = view.findViewById(R.id.tv_description)
                 val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
                 val size = if (long.length < 300) long.length else 300
                 val temp = long.chunked(size)[0].split(".").toMutableList()
@@ -182,20 +182,23 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
 
                 // stores
                 storeAdapter.updateStoreList(results.stores)
-                val stores: TextView = findViewById(R.id.tv_stores)
+                val stores: TextView = view.findViewById(R.id.tv_stores)
 
                 val noStores = "$gameName not found in stores"
                 val yesStores = "$gameName found online in stores:"
-                if (results.stores.isNullOrEmpty()) stores.text = noStores
-                else stores.text = yesStores
+                if (results.stores.isNullOrEmpty()) {
+                    stores.text = noStores
+                } else {
+                    stores.text = yesStores
+                }
 
                 // screenshots
-                gameScreenshotsViewModel.results.observe(this) { ssResults ->
-                    val screenshots: LinearLayout = findViewById(R.id.screenshots)
+                gameScreenshotsViewModel.results.observe(viewLifecycleOwner) { ssResults ->
+                    val screenshots: LinearLayout = view.findViewById(R.id.screenshots)
                     if (ssResults != null) {
                         Log.d(tag, ssResults.toString())
                         for (screenshot in ssResults.results) {
-                            val tempSS = ImageView(this)
+                            val tempSS = ImageView(requireContext())
                             tempSS.layoutParams = LinearLayout.LayoutParams(
                                 800,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -209,10 +212,10 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 }
 
                 // trailer
-                gameTrailerViewModel.results.observe(this) { trailerResults ->
+                gameTrailerViewModel.results.observe(viewLifecycleOwner) { trailerResults ->
                     if (trailerResults != null) {
                         var trailerTitleText = "$gameName Trailer"
-                        val trailerTitle = findViewById<TextView>(R.id.tv_trailer_title)
+                        val trailerTitle = view.findViewById<TextView>(R.id.tv_trailer_title)
                         trailerTitle.text = trailerTitleText
                         if (trailerResults.count > 0) {
                             url = trailerResults.results[0].data.normal
@@ -229,14 +232,14 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                                 setDataSource(url)
                                 prepare() // might take long! (for buffering, etc)
                             }
-                            textureView = findViewById(R.id.tv_trailer)
+                            textureView = view.findViewById(R.id.tv_trailer)
                             textureView.surfaceTextureListener = this
                             textureView.layoutParams = LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.WRAP_CONTENT,
                                 600
                             )
 
-                            mediaController = MediaController(this)
+                            mediaController = MediaController(requireContext())
                         } else {
                             trailerTitle.visibility = View.INVISIBLE
                             trailerTitle.height = 0
@@ -249,8 +252,8 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
             }
         }
 
-        gameDetailsViewModel.loading.observe(this) { uiState ->
-            when(uiState){
+        gameDetailsViewModel.loading.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
                 LoadingStatus.LOADING -> {
                     loadingIndicator.visibility = View.VISIBLE
                     detailsLayout.visibility = View.INVISIBLE
@@ -269,11 +272,11 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
             }
         }
 
-        gameDetailsViewModel.error.observe(this) { error ->
+        gameDetailsViewModel.error.observe(viewLifecycleOwner) { error ->
             Log.d(tag, error.toString())
         }
 
-        favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(this) { favoriteGame ->
+        favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(viewLifecycleOwner) { favoriteGame ->
             when (favoriteGame) {
                 null -> {
                     isFavorite = false
@@ -303,16 +306,6 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
         }
     }
 
-    private fun startDeveloperActivity(dev : GameDetails) {
-        Log.d("Start Dev Intent: ", dev.developers[0]?.name.toString())
-        val intent = Intent(this, DeveloperDetailsActivity::class.java).apply {
-            putExtra(EXTRA_DEVELOPER_ID,dev.developers[0]?.id)
-        }
-
-        startActivity(intent)
-    }
-
-
     override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
         val surface = Surface(surfaceTexture)
         Log.d("hihihi", url)
@@ -330,31 +323,14 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
         textureView.setOnClickListener { mediaController.show() }
         scrollView.viewTreeObserver.addOnScrollChangedListener { mediaController.hide() }
     }
+
     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
+
     override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
         return false
     }
+
     override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
-
-    private fun onGameListClick(gameListItem: GameListItem) {
-        Log.d(tag, gameListItem.toString())
-        val intent = Intent(this, GameDetailActivity::class.java).apply {
-            putExtra(EXTRA_GAME_LIST_ITEM, gameListItem)
-        }
-        startActivity(intent)
-    }
-
-    private fun onStoreClick(store: Store) {
-        Log.d(tag, store.toString())
-        var url = store.store.domain
-        if (!url.startsWith("http://") && !url.startsWith("https://"))
-            url = "http://$url"
-        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        try {
-            startActivity(webIntent)
-        } catch (e: ActivityNotFoundException) {
-        }
-    }
 
     override fun start() {
         mediaPlayer.start()
@@ -398,5 +374,25 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
 
     override fun getAudioSessionId(): Int {
         return mediaPlayer.audioSessionId
+    }
+
+    private fun onDeveloperClick(gameDetails: GameDetails) {
+
+    }
+
+    private fun onStoreClick(store: Store) {
+        Log.d(tag, store.toString())
+        var url = store.store.domain
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://$url"
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        try {
+            startActivity(webIntent)
+        } catch (e: ActivityNotFoundException) {
+        }
+    }
+
+    private fun onGameListClick(gameListItem: GameListItem) {
+
     }
 }
