@@ -372,7 +372,7 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
     }
 
     private fun onDeveloperClick(gameDetails: GameDetails) {
-        val directions = GameDetailsFragmentDirections.navigateToDeveloperDetails(gameDetails.developers[0]?.id)
+        val directions = GameDetailsFragmentDirections.navigateToDeveloperDetails(gameDetails.developers[0]!!.id)
         findNavController().navigate(directions)
     }
 

@@ -42,7 +42,7 @@
 
         <argument
             android:name="developerId"
-            app:argType="Int" />
+            app:argType="integer" />
 
         <action
             android:id="@+id/navigate_to_game_details"
