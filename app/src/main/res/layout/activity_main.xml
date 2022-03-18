@@ -9,9 +9,11 @@
     tools:context=".ui.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container"
+        android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.example.gamecollection.ui.GameSearchFragment" />
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/main_nav_graph"
+        app:defaultNavHost="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

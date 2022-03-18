@@ -12,6 +12,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -167,6 +168,7 @@ class GameSearchFragment : Fragment(R.layout.game_search) {
     }
 
     private fun onGameListItemClick(gameListItem: GameListItem) {
-
+        val directions = GameSearchFragmentDirections.navigateToGameDetails(gameListItem)
+        findNavController().navigate(directions)
     }
 }

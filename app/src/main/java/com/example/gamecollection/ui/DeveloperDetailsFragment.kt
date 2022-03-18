@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,7 +21,8 @@ const val EXTRA_DEVELOPER_ID = "com.example.gamecollection.DEVELOPER_ID"
 
 class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
     private val TAG = "DeveloperDetailsFragment"
-    private var developerID: Int? = null
+
+    private val args: DeveloperDetailsFragmentArgs by navArgs()
 
     private val gameSearchViewModel: GameSearchViewModel by viewModels()
     private val developerViewModel: DeveloperDetailsViewModel by viewModels()
@@ -49,13 +52,7 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
             gameListAdapter.updateGameListItems(results?.results)
         }
 
-        /*
-        if (intent != null && intent.hasExtra(EXTRA_DEVELOPER_ID)) {
-            developerID = intent.getSerializableExtra(EXTRA_DEVELOPER_ID) as Int
-            Log.d(tag, developerID!!.toString())
-            developerViewModel.loadResults(developerID!!, RAWG_API_KEY)
-        }
-        */
+        developerViewModel.loadResults(args.developerId, RAWG_API_KEY)
 
         developerViewModel.results.observe(viewLifecycleOwner) { results ->
             if (results != null) {
@@ -97,7 +94,7 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
                         null,
                         "20",
                         null,
-                        developerID.toString()
+                        args.developerId.toString()
                     )
                 }
                 else if (games <= 2 || games %2 == 0) {
@@ -108,7 +105,7 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
                         null,
                         games.toString(),
                         null,
-                        developerID.toString()
+                        args.developerId.toString()
                     )
                 }
                 else {
@@ -119,7 +116,7 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
                         null,
                         (games - 1).toString(),
                         null,
-                        developerID.toString()
+                        args.developerId.toString()
                     )
                 }
             }
@@ -147,6 +144,7 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
     }
 
     private fun onGameListItemClick(gameListItem: GameListItem) {
-
+        val directions = DeveloperDetailsFragmentDirections.navigateToGameDetails(gameListItem)
+        findNavController().navigate(directions)
     }
 }

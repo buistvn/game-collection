@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gamecollection.R
@@ -30,6 +31,7 @@ class FavoriteGamesFragment : Fragment(R.layout.favorite_games) {
     }
 
     private fun onGameListItemClick(gameListItem: GameListItem) {
-
+        val directions = FavoriteGamesFragmentDirections.navigateToGameDetails(gameListItem)
+        findNavController().navigate(directions)
     }
 }

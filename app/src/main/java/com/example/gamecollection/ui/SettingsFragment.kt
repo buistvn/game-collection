@@ -6,8 +6,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.gamecollection.R
 
-class SettingsFragment :   PreferenceFragmentCompat(){
-   override fun onCreatePreferences(savedInstanceState: Bundle?,rootKey:String?){
-       setPreferencesFromResource(R.xml.settings,rootKey)
+class SettingsFragment : PreferenceFragmentCompat() {
+   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey:String?) {
+       setPreferencesFromResource(R.xml.settings, rootKey)
    }
 }

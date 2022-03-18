@@ -16,6 +16,8 @@ import androidx.activity.viewModels
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,8 +34,9 @@ import java.io.IOException
 class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.SurfaceTextureListener, MediaController.MediaPlayerControl {
     private val TAG = "GameDetailsFragment"
 
-    private var gameListItem: GameListItem? = null
     private var isFavorite = false
+
+    private val args: GameDetailsFragmentArgs by navArgs()
 
     private val gameDetailsViewModel: GameDetailsViewModel by viewModels()
     private val gameSearchViewModel: GameSearchViewModel by viewModels()
@@ -83,15 +86,9 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
             gameListAdapter.updateGameListItems(results?.results)
         }
 
-        /*
-        if (intent != null && intent.hasExtra(EXTRA_GAME_LIST_ITEM)) {
-            gameListItem = intent.getSerializableExtra(EXTRA_GAME_LIST_ITEM) as GameListItem
-            Log.d(tag, gameListItem!!.toString())
-            gameDetailsViewModel.loadResults(gameListItem!!.id, RAWG_API_KEY)
-            gameScreenshotsViewModel.loadResults(gameListItem!!.id.toString(), RAWG_API_KEY)
-            gameTrailerViewModel.loadResults(gameListItem!!.id, RAWG_API_KEY)
-        }
-        */
+        gameDetailsViewModel.loadResults(args.gameListItem.id, RAWG_API_KEY)
+        gameScreenshotsViewModel.loadResults(args.gameListItem.id.toString(), RAWG_API_KEY)
+        gameTrailerViewModel.loadResults(args.gameListItem.id, RAWG_API_KEY)
 
         gameDetailsViewModel.results.observe(viewLifecycleOwner) { results ->
             if (results != null) {
@@ -276,7 +273,7 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
             Log.d(tag, error.toString())
         }
 
-        favoriteGamesViewModel.getFavoriteGameById(gameListItem!!.id).observe(viewLifecycleOwner) { favoriteGame ->
+        favoriteGamesViewModel.getFavoriteGameById(args.gameListItem.id).observe(viewLifecycleOwner) { favoriteGame ->
             when (favoriteGame) {
                 null -> {
                     isFavorite = false
@@ -292,15 +289,13 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
         }
 
         favoriteButton.setOnClickListener {
-            if (gameListItem != null) {
-                isFavorite = !isFavorite
-                when (isFavorite) {
-                    true -> {
-                        favoriteGamesViewModel.addFavoriteGame(gameListItem!!)
-                    }
-                    false -> {
-                        favoriteGamesViewModel.removeFavoriteGame(gameListItem!!)
-                    }
+            isFavorite = !isFavorite
+            when (isFavorite) {
+                true -> {
+                    favoriteGamesViewModel.addFavoriteGame(args.gameListItem)
+                }
+                false -> {
+                    favoriteGamesViewModel.removeFavoriteGame(args.gameListItem)
                 }
             }
         }
@@ -377,7 +372,8 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
     }
 
     private fun onDeveloperClick(gameDetails: GameDetails) {
-
+        val directions = GameDetailsFragmentDirections.navigateToDeveloperDetails(gameDetails.developers[0]?.id)
+        findNavController().navigate(directions)
     }
 
     private fun onStoreClick(store: Store) {
@@ -393,6 +389,7 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
     }
 
     private fun onGameListClick(gameListItem: GameListItem) {
-
+        val directions = GameDetailsFragmentDirections.navigateToGameDetails(gameListItem)
+        findNavController().navigate(directions)
     }
 }
