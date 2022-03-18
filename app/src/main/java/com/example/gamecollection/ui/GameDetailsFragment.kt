@@ -7,6 +7,9 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.Surface
 import android.view.TextureView
@@ -116,16 +119,23 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
 
                 // developer
                 val developer: TextView = view.findViewById(R.id.tv_developer)
-                val developerText = "Developed by " + results.developers[0]?.name
+                val developerText = SpannableStringBuilder("Developed by " + results.developers[0]?.name)
+                developerText.setSpan(UnderlineSpan(), 13, developerText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 developer.text = developerText
                 developer.setOnClickListener {
                     onDeveloperClick(results)
                 }
 
                 // background
+                var backgroundImg = ""
+                backgroundImg = if (results.background_image.isNullOrEmpty()) {
+                    "https://blog.greendot.org/wp-content/uploads/sites/13/2021/09/placeholder-image.png"
+                } else {
+                    results.background_image
+                }
                 val background = view.findViewById<ImageView>(R.id.iv_background)
                 Glide.with(this)
-                    .load(results.background_image)
+                    .load(backgroundImg)
                     .into(background)
 
                 // rating
@@ -133,7 +143,11 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
                 view.findViewById<TextView>(R.id.tv_rating).text = rating
 
                 // release date
-                val releasedDate = "Released in " + results.released.take(4)
+                var releasedText = "No Release Date"
+                if (!results.released.isNullOrEmpty()) {
+                    releasedText = "Released in " + results.released.take(4)
+                }
+                val releasedDate = releasedText
                 view.findViewById<TextView>(R.id.tv_released).text = releasedDate
 
                 // tags
@@ -163,17 +177,22 @@ class GameDetailsFragment : Fragment(R.layout.game_details), TextureView.Surface
 
                 // description
                 val desc: TextView = view.findViewById(R.id.tv_description)
-                val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                val size = if (long.length < 300) long.length else 300
-                val temp = long.chunked(size)[0].split(".").toMutableList()
-                val shortI = temp.joinToString(".")
-                val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI...") else long
-                desc.text = short
-                desc.setOnClickListener {
-                    if (desc.text == short) {
-                        desc.text = long
-                    } else {
-                        desc.text = short
+                if (results.description == "") {
+                    desc.text = "No Description"
+                } else {
+                    val long =
+                        HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                    val size = if (long.length < 300) long.length else 300
+                    val temp = long.chunked(size)[0].split(".").toMutableList()
+                    val shortI = temp.joinToString(".")
+                    val short = if (shortI.compareTo(long.toString()) != 0) ("$shortI...") else long
+                    desc.text = short
+                    desc.setOnClickListener {
+                        if (desc.text == short) {
+                            desc.text = long
+                        } else {
+                            desc.text = short
+                        }
                     }
                 }
 

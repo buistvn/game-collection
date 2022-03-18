@@ -52,8 +52,14 @@ class GameListAdapter (private val onGameListItemClick: (GameListItem) -> Unit)
             val ctx = itemView.context
             nameTV.text = gameListItem.name
 
+            var background = ""
+            background = if (gameListItem.background_image.isNullOrEmpty()) {
+                "https://blog.greendot.org/wp-content/uploads/sites/13/2021/09/placeholder-image.png"
+            } else {
+                gameListItem.background_image
+            }
             Glide.with(ctx)
-                .load(gameListItem.background_image)
+                .load(background)
                 .into(bgImageIV)
         }
     }

@@ -15,8 +15,8 @@ data class GameListItem(
     val name: String,
 
     @Json(name = "released")
-    val released: String,
+    val released: String?,
 
     @Json(name = "background_image")
-    val background_image: String
+    val background_image: String?
 ) : Serializable

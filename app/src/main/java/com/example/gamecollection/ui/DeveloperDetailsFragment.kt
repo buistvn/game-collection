@@ -1,6 +1,7 @@
 package com.example.gamecollection.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -60,16 +61,22 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
                 view.findViewById<TextView>(R.id.Developer_Name).text = results.name
                 view.findViewById<TextView>(R.id.developer_games).text = "Total Games by this Developer: \t#"+ games.toString()
 
+                var background = ""
+                background = if (results.background_image.isNullOrEmpty()) {
+                    "https://blog.greendot.org/wp-content/uploads/sites/13/2021/09/placeholder-image.png"
+                } else {
+                    results.background_image
+                }
                 Glide.with(this)
-                    .load(results.background_image)
+                    .load(background)
                     .into(view.findViewById(R.id.dev_image))
 
+                val desc: TextView = view.findViewById(R.id.Developer_Details)
                 if (results.description.isNullOrEmpty()) {
-                    view.findViewById<TextView>(R.id.Developer_Details).text = ""
-                    view.findViewById<TextView>(R.id.Developer_Details).visibility = View.INVISIBLE
+                    desc.text = null
+                    desc.height = 0
                 }
                 else {
-                    val desc: TextView = view.findViewById(R.id.Developer_Details)
                     val long = HtmlCompat.fromHtml(results.description, HtmlCompat.FROM_HTML_MODE_COMPACT)
                     val size = if (long.length < 200) long.length else 200
                     val temp = long.chunked(size)[0].split(".").toMutableList()
@@ -126,17 +133,17 @@ class DeveloperDetailsFragment : Fragment(R.layout.developer_details) {
             when (loading) {
                 LoadingStatus.LOADING -> {
                     loadingIndicator.visibility = View.VISIBLE
-                    holder.visibility = View.INVISIBLE
+                    searchResultListRV.visibility = View.INVISIBLE
                     searchErrorTV.visibility = View.INVISIBLE
                 }
                 LoadingStatus.ERROR -> {
                     loadingIndicator.visibility = View.INVISIBLE
-                    holder.visibility = View.VISIBLE
+                    searchResultListRV.visibility = View.INVISIBLE
                     searchErrorTV.visibility = View.VISIBLE
                 }
                 else -> {
                     loadingIndicator.visibility = View.INVISIBLE
-                    holder.visibility = View.VISIBLE
+                    searchResultListRV.visibility = View.VISIBLE
                     searchErrorTV.visibility = View.INVISIBLE
                 }
             }
