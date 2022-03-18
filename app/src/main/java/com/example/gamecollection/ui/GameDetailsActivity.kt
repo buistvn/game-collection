@@ -98,7 +98,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 // genres
                 var x = 0
                 var ids = ""
-                var genres = "Genres: "
+                var genres = "Games from similar genres ("
                 for (genre in results.genres) {
                     genres = genres + genre!!.name + ", "
                     if (x < 3) {
@@ -108,27 +108,35 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 }
                 ids = ids.dropLast(2)
                 genres = genres.dropLast(2)
+                genres = "$genres)"
                 gameSearchViewModel.loadResults(RAWG_API_KEY, null, null, null, "4", ids, null)
                 findViewById<TextView>(R.id.tv_genres).text = genres
 
                 // title
-                findViewById<TextView>(R.id.tv_game_title).text = results.name
+                val title = findViewById<TextView>(R.id.tv_game_title)
+                val gameName = results.name
+                title.text = gameName
 
                 // developer
-                val developer: TextView = findViewById(R.id.developer)
-                developer.text = "Developed by " + results.developers[0]?.name
+                val developer: TextView = findViewById(R.id.tv_developer)
+                val developerText = "Developed by " + results.developers[0]?.name
+                developer.text = developerText
                 developer.setOnClickListener {
                     startDeveloperActivity(results)
                 }
 
-
+                // background
+                val background = findViewById<ImageView>(R.id.iv_background)
+                Glide.with(this)
+                    .load(results.background_image)
+                    .into(background)
 
                 // rating
                 val rating = "Rating: " + results.rating.toString() + "/5"
                 findViewById<TextView>(R.id.tv_rating).text = rating
 
                 // release date
-                val releasedDate = "Released: " + results.released
+                val releasedDate = "Released on " + results.released
                 findViewById<TextView>(R.id.tv_released).text = releasedDate
 
                 // tags
@@ -176,8 +184,8 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 storeAdapter.updateStoreList(results.stores)
                 val stores: TextView = findViewById(R.id.tv_stores)
 
-                val noStores = "Not found in stores"
-                val yesStores = "Stores:"
+                val noStores = "$gameName not found in stores"
+                val yesStores = "$gameName found online in stores:"
                 if (results.stores.isNullOrEmpty()) stores.text = noStores
                 else stores.text = yesStores
 
@@ -203,7 +211,9 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 // trailer
                 gameTrailerViewModel.results.observe(this) { trailerResults ->
                     if (trailerResults != null) {
-                        var trailerTitle = ""
+                        var trailerTitleText = "$gameName Trailer"
+                        val trailerTitle = findViewById<TextView>(R.id.tv_trailer_title)
+                        trailerTitle.text = trailerTitleText
                         if (trailerResults.count > 0) {
                             url = trailerResults.results[0].data.normal
                             if (!url.startsWith("http://") && !url.startsWith("https://"))
@@ -221,18 +231,21 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                             }
                             textureView = findViewById(R.id.tv_trailer)
                             textureView.surfaceTextureListener = this
-                            textureView.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 600)
+                            textureView.layoutParams = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                600
+                            )
 
                             mediaController = MediaController(this)
-
-                            trailerTitle = "Trailer:"
                         } else {
-                            trailerTitle = "No Trailer"
+                            trailerTitle.visibility = View.INVISIBLE
+                            trailerTitle.height = 0
+                            val params =  LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                            params.setMargins(0, 0, 0, 0)
+                            trailerTitle.layoutParams = params
                         }
-                        findViewById<TextView>(R.id.tv_trailer_title).text = trailerTitle
                     }
                 }
-
             }
         }
 
