@@ -126,12 +126,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        var sort = sharedPrefs.getString(
+            getString(R.string.pref_sort_key),
+            null
+        )
+        var beginYear = sharedPrefs.getString(
+            getString(R.string.pref_begin_year_key),
+            null
+        )
+
+        var endYear = sharedPrefs.getString(
+            getString(R.string.pref_end_year_key),
+            null
+        )
+
+        if (beginYear == null || beginYear == "") { beginYear = "2021" }
+        if (endYear == null || endYear == "") { endYear = "2021" }
+
+        val year = "$beginYear-01-01,$endYear-12-31"
+        if (sort == "none") sort = null
         // Results on start are the most popular games in 2021
         gameSearchViewModel.loadResults(
             RAWG_API_KEY,
             null,
-            "2021-01-01,2021-12-31",
-            "-added",
+            year,
+            sort,
             "30",
             null,
             null
