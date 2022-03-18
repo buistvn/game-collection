@@ -18,15 +18,47 @@
             android:layout_height="match_parent"
             android:id="@+id/details"
             android:orientation="vertical">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/iv_background"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_game_title"
-                android:textSize="28sp"
-                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:textStyle="bold"
                 android:textAppearance="?attr/textAppearanceHeadline2"
-                android:layout_marginTop="10dp"/>
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textSize="12sp"
+                android:id="@+id/tv_released"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/tv_developer"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_description"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,59 +69,67 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
                     android:id="@+id/tv_rating"/>
-                <TextView
+
+                <LinearLayout
                     android:layout_weight="1"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:id="@+id/tv_released"/>
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/bt_favorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/favorite_off"
+                        android:backgroundTint="@color/red_500"
+                        app:icon="@drawable/ic_button_favorite_off"
+                        style="@style/Widget.MaterialComponents.Button.Icon" />
+                </LinearLayout>
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/bt_favorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/favorite_off"
-                android:backgroundTint="@color/red_500"
-                app:icon="@drawable/ic_button_favorite_off"
-                style="@style/Widget.MaterialComponents.Button.Icon" />
-
-            <TextView
-                android:layout_marginTop="10dp"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:id="@+id/developer"/>
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/darker_gray" />
 
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#0000"
+                    android:id="@+id/screenshots"/>
+            </HorizontalScrollView>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_tags"
-                android:textSize="14sp"
-                android:textAppearance="?attr/textAppearanceBody1"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_genres"
-                android:textSize="14sp"
-                android:textAppearance="?attr/textAppearanceBody1"
+                android:layout_height="1dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@android:color/darker_gray" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_trailer_title"
-                android:textSize="14sp"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_margin="10dp"/>
             <TextureView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,56 +141,33 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
                     android:id="@+id/tv_stores"
-                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:textSize="16sp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_stores"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@android:color/darker_gray" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_description"
-                android:textSize="14sp"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Screenshots:"
-                android:textSize="14sp"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp" />
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="#0000"
-                    android:id="@+id/screenshots"/>
-            </HorizontalScrollView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="Games from Similar Genres:"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:textAppearance="?attr/textAppearanceBody1"/>
+                android:id="@+id/tv_genres"
+                android:textSize="15sp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_search_results"
                 android:layout_width="match_parent"
@@ -162,7 +179,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="?attr/colorError"
             android:visibility="invisible"
             android:text="@string/search_error" />

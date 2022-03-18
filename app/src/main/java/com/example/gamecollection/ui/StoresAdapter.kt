@@ -1,5 +1,9 @@
 package com.example.gamecollection.ui
 
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +45,9 @@ class StoresAdapter (private val onStoreClick:(Store) -> Unit)
         }
         fun bind(stores: Store){
             currentStore = stores
-            nameTV.text = stores.store.name
+            val store = SpannableStringBuilder(stores.store.name)
+            store.setSpan(UnderlineSpan(), 0, store.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            nameTV.text = store
         }
     }
 }
