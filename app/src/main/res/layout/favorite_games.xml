@@ -5,12 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.FavoriteGamesActivity">
+    tools:context=".ui.FavoriteGamesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_favorite_games"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/tv_search_error"
         android:layout_width="wrap_content"

@@ -1,61 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="@string/search_hint">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_search_input"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/bt_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/search_button"
-        style="?attr/materialButtonStyle" />
-
-
-    <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_search_results"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <TextView
-                android:id="@+id/tv_search_error"
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:textAppearance="?attr/textAppearanceBody1"
-                android:textColor="?attr/colorError"
-                android:visibility="invisible"
-                android:text="@string/search_error" />
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/loading_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:layout_marginTop="32dp"
-                android:layout_gravity="top|center_horizontal"
-                android:visibility="invisible" />
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/nav_host_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                app:navGraph="@navigation/main_nav_graph"
+                app:defaultNavHost="true" />
 
-    </FrameLayout>
+        </LinearLayout>
 
-</LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/main_nav_drawer" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/game_search">
+
+    <fragment
+        android:id="@+id/game_search"
+        android:name="com.example.gamecollection.ui.GameSearchFragment"
+        android:label="@string/label_game_search">
+
+        <action
+            android:id="@+id/navigate_to_game_details"
+            app:destination="@id/game_details" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/game_details"
+        android:name="com.example.gamecollection.ui.GameDetailsFragment"
+        android:label="@string/label_game_details">
+
+        <argument
+            android:name="gameListItem"
+            app:argType="com.example.gamecollection.data.GameListItem" />
+
+        <action
+            android:id="@+id/navigate_to_game_details"
+            app:destination="@id/game_details" />
+
+        <action
+            android:id="@+id/navigate_to_developer_details"
+            app:destination="@id/developer_details" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/developer_details"
+        android:name="com.example.gamecollection.ui.DeveloperDetailsFragment"
+        android:label="@string/label_developer_details">
+
+        <argument
+            android:name="developerId"
+            app:argType="integer" />
+
+        <action
+            android:id="@+id/navigate_to_game_details"
+            app:destination="@id/game_details" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/favorite_games"
+        android:name="com.example.gamecollection.ui.FavoriteGamesFragment"
+        android:label="@string/label_favorite_games">
+
+        <action
+            android:id="@+id/navigate_to_game_details"
+            app:destination="@id/game_details" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/settings"
+        android:name="com.example.gamecollection.ui.SettingsFragment"
+        android:label="@string/label_settings" />
+
+</navigation>
