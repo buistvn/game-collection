@@ -6,7 +6,7 @@
 
     <string name="search_error">We cannot find the game you want. Please try another game.</string>
 
-    <string name="favorite_off">Add to Favorites</string>
+    <string name="favorite_off">Favorite</string>
     <string name="favorite_on">Added</string>
 
     <string name="action_settings">Settings</string>

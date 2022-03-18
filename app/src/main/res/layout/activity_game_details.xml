@@ -27,30 +27,24 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_game_title"
                 android:textSize="30sp"
-                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:textStyle="bold"
                 android:textAppearance="?attr/textAppearanceHeadline2"
-                android:textColor="@color/black"
-                android:layout_margin="10dp"/>
+                android:textColor="@color/black"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:id="@+id/tv_released"/>
-                <TextView
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:id="@+id/tv_developer"/>
-            </LinearLayout>
+                android:layout_marginLeft="10dp"
+                android:textSize="12sp"
+                android:id="@+id/tv_released"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/tv_developer"/>
 
             <View
                 android:layout_width="match_parent"
@@ -133,6 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_trailer_title"
+                android:textSize="16sp"
                 android:gravity="center"
                 android:layout_margin="10dp"/>
             <TextureView
@@ -147,6 +142,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_stores"
+                    android:textSize="16sp"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
@@ -168,6 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_genres"
+                android:textSize="15sp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>

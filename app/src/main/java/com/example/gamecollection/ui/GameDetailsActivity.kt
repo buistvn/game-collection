@@ -136,7 +136,7 @@ class GameDetailActivity : AppCompatActivity(), TextureView.SurfaceTextureListen
                 findViewById<TextView>(R.id.tv_rating).text = rating
 
                 // release date
-                val releasedDate = "Released on " + results.released
+                val releasedDate = "Released in " + results.released.take(4)
                 findViewById<TextView>(R.id.tv_released).text = releasedDate
 
                 // tags
