@@ -13,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.gamecollection.R
 import com.google.android.material.navigation.NavigationView
 
-const val RAWG_API_KEY = "e1dd3dd1ae1b47a49ae5b110b5447c6c"
+const val RAWG_API_KEY = BuildConfig.RAWG_API_KEY
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
