@@ -23,7 +23,7 @@ To set up a local copy of the project, follow these steps.
 
 1. Clone the repository
    ```sh
-   git clone https://github.com/osu-cs492-w22/game-collection.git
+   git clone https://github.com/buistvn/game-collection.git
    ```
 2. Generate an API key from [RAWG](https://rawg.io/apidocs)
 3. Create a `gradle.properties` file in the Gradle user home directory (`$USER_HOME/.gradle` by default) with the API key
