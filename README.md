@@ -3,7 +3,7 @@
 
 ![Project Screenshot][project-screenshot]
 
-Game Collection is a mobile app for browsing video games using data provided by the [RAWG API](https://rawg.io/apidocs). Users can find information on games such as ratings, developers, stores, screenshots, and trailers. While searching for games, users can narrow down their results by configuring the filters in the settings. The app has a local database which allows users to save games by favoriting them.
+Game Collection is a mobile app for browsing video games using data provided by the [RAWG API](https://rawg.io/apidocs). Users can find information on games such as ratings, developers, stores, screenshots, and trailers. While searching for games, users can narrow down their results by configuring the filters in the settings menu. The app has a local database which allows users to save games by favoriting them.
 
 
 
